@@ -26,4 +26,8 @@ yarn-error.log*
 
 # Optional eslint cache
 .eslintcache
+
 .package-lock.json
+.env
+.env.development
+.env.production
