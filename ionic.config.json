@@ -1,0 +1,7 @@
+{
+  "name": "depo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
