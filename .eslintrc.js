@@ -5,11 +5,13 @@ module.exports = {
     jest: true
   },
   extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
+    'airbnb-typescript',
+    'airbnb/hooks',
     'plugin:@typescript-eslint/recommended',
-    'prettier'
+    'plugin:jest/recommended',
+    'plugin:prettier/recommended'
   ],
+  plugins: ['react', '@typescript-eslint', 'jest'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -18,12 +20,6 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  plugins: [
-    'react',
-    'react-hooks',
-    '@typescript-eslint',
-    'prettier'
-  ],
   rules: {
   },
   settings: {

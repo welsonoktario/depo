@@ -1,20 +1,12 @@
-import React from 'react'
-import { Redirect, Route } from 'react-router-dom'
-import {
-  IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  setupIonicReact,
-} from '@ionic/react'
+import React, { useEffect, useState } from 'react'
+import { Redirect, Route, useHistory } from 'react-router-dom'
+import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { home, time, person } from 'ionicons/icons'
-import Home from './pages/Home'
-import Riwayat from './pages/Riwayat'
-import Profil from './pages/Profil'
+import { useAtom } from 'jotai'
+import { authAtom } from './atoms'
+import { Storage } from '@capacitor/storage'
+import Login from './pages/Auth/Login'
+import Tabs from './pages/Tabs/Tabs'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -34,44 +26,64 @@ import '@ionic/react/css/display.css'
 
 /* Theme variables */
 import './theme/variables.css'
+import './App.css'
 
 setupIonicReact()
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path='/home'>
-            <Home />
-          </Route>
-          <Route exact path='/riwayat'>
-            <Riwayat />
-          </Route>
-          <Route path='/profil'>
-            <Profil />
-          </Route>
-          <Route exact path='/'>
-            <Redirect to='/home' />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot='bottom'>
-          <IonTabButton tab='home' href='/home'>
-            <IonIcon icon={home} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab='riwayat' href='/riwayat'>
-            <IonIcon icon={time} />
-            <IonLabel>Riwayat</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab='profil' href='/profil'>
-            <IonIcon icon={person} />
-            <IonLabel>Profil</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-)
+const App: React.FC = () => {
+  const [loading, setLoading] = useState(false)
+  const [auth, setAuth] = useAtom(authAtom)
+
+  useEffect(() => {
+    const getAuth = async () => {
+      setLoading(true)
+      const userJson = await Storage.get({ key: 'user' })
+      const tokenString = await Storage.get({ key: 'token' })
+
+      if (
+        userJson.value &&
+        userJson.value != 'null' &&
+        tokenString.value &&
+        tokenString.value != 'null'
+      ) {
+        setAuth({
+          user: JSON.parse(userJson.value),
+          token: tokenString.value,
+        })
+      }
+      setLoading(false)
+    }
+
+    getAuth()
+  }, [])
+
+  if (loading) {
+    return <IonSpinner className='spinner'></IonSpinner>
+  } else {
+    return (
+      <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            {auth && auth.user ? (
+              <>
+                <Route exact path='/tabs'>
+                  <Tabs />
+                </Route>
+                <Redirect exact from='/' to='/tabs' />
+              </>
+            ) : (
+              <>
+                <Route exact path='/login'>
+                  <Login />
+                </Route>
+                <Redirect exact from='/' to='/login' />
+              </>
+            )}
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
+    )
+  }
+}
 
 export default App
