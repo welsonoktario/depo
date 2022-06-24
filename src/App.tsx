@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Redirect, Route, useHistory } from 'react-router-dom'
+import { Redirect, Route } from 'react-router-dom'
 import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { useAtom } from 'jotai'
@@ -42,9 +42,9 @@ const App: React.FC = () => {
 
       if (
         userJson.value &&
-        userJson.value != 'null' &&
+        userJson.value !== 'null' &&
         tokenString.value &&
-        tokenString.value != 'null'
+        tokenString.value !== 'null'
       ) {
         setAuth({
           user: JSON.parse(userJson.value),

@@ -43,7 +43,7 @@ const Login: React.FC = () => {
 
     const { status, msg, data } = await res.data
 
-    if (status == 'OK') {
+    if (status === 'OK') {
       await Storage.clear()
       await Storage.set({ key: 'user', value: JSON.stringify(data.user) })
       await Storage.set({ key: 'token', value: JSON.stringify(data.token) })
