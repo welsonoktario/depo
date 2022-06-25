@@ -1,9 +1,23 @@
-import { modalController } from "@ionic/core";
-import { IonBackButton, IonButton, IonContent, IonFooter, IonHeader, IonInput, IonItem, IonLabel, IonText, IonTitle, IonToolbar } from "@ionic/react";
-import { useAtom } from "jotai";
-import React, { useState } from "react";
-import { cartAtom } from "../atoms";
-import { Barang } from "../models";
+import { modalController } from '@ionic/core'
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonText,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react'
+import { close } from 'ionicons/icons'
+import { useAtom } from 'jotai'
+import React, { useState } from 'react'
+import { cartAtom } from '../atoms'
+import { Barang } from '../models'
 
 const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
   const [jumlah, setJumlah] = useState(1)
@@ -19,14 +33,20 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
     } else {
       setCart([...cart, { barang, jumlah }])
     }
-    await modalController.dismiss()
+    await modalController.dismiss(true)
+  }
+
+  const cancel = async () => {
+    await modalController.dismiss(false)
   }
 
   return (
     <>
       <IonHeader>
         <IonToolbar>
-          <IonBackButton></IonBackButton>
+          <IonButtons slot="start">
+            <IonIcon onClick={cancel} slot="icon-only" icon={close}></IonIcon>
+          </IonButtons>
           <IonTitle>Tambah ke Keranjang</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -34,12 +54,15 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
       <IonContent className="ion-padding">
         <IonItem>
           <IonLabel>Jumlah</IonLabel>
-          <IonInput type="number" placeholder="Jumlah" value={jumlah} onIonChange={(e) => setJumlah(e.target.value as number)}></IonInput>
+          <IonInput
+            type="number"
+            placeholder="Jumlah"
+            value={jumlah}
+            onIonChange={(e) => setJumlah(e.target.value as number)}
+          ></IonInput>
         </IonItem>
         <IonItem>
-          <IonText>
-            Subtotal: {props.barang.harga * jumlah}
-          </IonText>
+          <IonText>Subtotal: {props.barang.harga * jumlah}</IonText>
         </IonItem>
       </IonContent>
 

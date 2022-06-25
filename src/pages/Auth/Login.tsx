@@ -1,3 +1,8 @@
+import { useSetAtom } from "jotai"
+import React, { useState } from "react"
+
+import { Http } from "@capacitor-community/http"
+import { Storage } from "@capacitor/storage"
 import {
   IonButton,
   IonContent,
@@ -8,16 +13,13 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-} from '@ionic/react'
-import { Storage } from '@capacitor/storage'
-import { Http } from '@capacitor-community/http'
-import React, { useState } from 'react'
-import { useSetAtom } from 'jotai'
-import { authAtom } from '../../atoms'
-import { useHistory } from 'react-router'
+} from "@ionic/react"
+
+import { authAtom } from "../../atoms"
+import { useIonRouter } from "../../utils"
 
 const Login: React.FC = () => {
-  const history = useHistory()
+  const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
   const [form, setForm] = useState({
     email: '',
@@ -51,7 +53,7 @@ const Login: React.FC = () => {
         user: data.user,
         token: data.token,
       })
-      history.replace('/tabs')
+      router.push('/tabs', 'forward', 'replace')
     } else {
       alert(msg)
     }
@@ -64,28 +66,28 @@ const Login: React.FC = () => {
           <IonTitle>Login</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className='ion-padding'>
+      <IonContent className="ion-padding">
         <form onSubmit={login}>
           <IonItem>
-            <IonLabel position='stacked'>Email</IonLabel>
+            <IonLabel position="stacked">Email</IonLabel>
             <IonInput
-              name='email'
-              type='email'
+              name="email"
+              type="email"
               value={form.email}
               onIonChange={(e) => handleChange(e)}
             ></IonInput>
           </IonItem>
           <IonItem>
-            <IonLabel position='stacked'>Password</IonLabel>
+            <IonLabel position="stacked">Password</IonLabel>
             <IonInput
-              name='password'
-              type='password'
+              name="password"
+              type="password"
               value={form.password}
               onIonChange={(e) => handleChange(e)}
             ></IonInput>
           </IonItem>
 
-          <IonButton type='submit' expand='block'>
+          <IonButton type="submit" expand="block">
             Login
           </IonButton>
         </form>

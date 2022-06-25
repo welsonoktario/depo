@@ -1,0 +1,10 @@
+ion-fab-button {
+  position: relative;
+}
+
+ion-fab-button > ion-badge {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.5rem;
+  z-index: 9999;
+}

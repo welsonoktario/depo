@@ -1,7 +1,7 @@
 import './Home.css'
 
 import { useAtom, useAtomValue } from 'jotai'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Virtuoso } from 'react-virtuoso'
 
 import { Http } from '@capacitor-community/http'
@@ -17,18 +17,20 @@ import {
 
 import { authAtom, cartAtom } from '../../atoms'
 import CardBarang from '../../components/CardBarang'
-import Cart from '../../components/Cart'
-import { Barang } from '../../models'
-import { modalController } from '@ionic/core'
+import { FABCart } from '../../components/FABCart'
 import ModalTambahBarang from '../../components/ModalTambahBarang'
+import { Barang } from '../../models'
+import { Storage } from '@capacitor/storage'
+import { ModalCart } from '../../components/ModalCart'
 
 const Home: React.FC = () => {
-  const [cart] = useAtom(cartAtom)
+  const [cart, setCart] = useAtom(cartAtom)
   const [barangs, setBarangs] = useState<Barang[]>([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState<Barang>()
+  const [isModalBarangOpen, setIsModalBarangOpen] = useState(false)
+  const [isModalCartOpen, setIsModalCartOpen] = useState(false)
   const auth = useAtomValue(authAtom)
-  const modal = useRef<HTMLIonModalElement>(null)
 
   useEffect(() => {
     loadBarangs()
@@ -36,6 +38,17 @@ const Home: React.FC = () => {
 
   const loadBarangs = async () => {
     setLoading(true)
+
+    const { value } = await Storage.get({ key: 'cart' })
+
+    try {
+      if (value) {
+        setCart(JSON.parse(value))
+      }
+    } catch (e) {
+      console.log(e)
+    }
+
     const res = await Http.get({
       url: process.env.REACT_APP_BASE_URL + '/barang',
       headers: {
@@ -46,6 +59,20 @@ const Home: React.FC = () => {
     const { data } = await res.data
     setBarangs(data)
     setLoading(false)
+  }
+
+  const openModal = (barang: Barang) => {
+    setSelected(barang)
+    setIsModalBarangOpen(true)
+  }
+
+  const closeModal = async (status: boolean) => {
+    setIsModalBarangOpen(false)
+
+    if (status) {
+      await Storage.remove({ key: 'cart' })
+      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
+    }
   }
 
   return (
@@ -65,7 +92,6 @@ const Home: React.FC = () => {
           <IonSpinner className="spinner"></IonSpinner>
         ) : (
           <>
-            {cart.length ? <Cart /> : null}
             {barangs.length > 0 ? (
               <Virtuoso
                 initialItemCount={0}
@@ -76,19 +102,28 @@ const Home: React.FC = () => {
                     <CardBarang
                       key={i}
                       barang={barangs[i]}
+                      onClick={(b) => openModal(b)}
                     ></CardBarang>
                   )
                 }}
               ></Virtuoso>
             ) : null}
+            <FABCart onClick={() => setIsModalCartOpen(true)}></FABCart>
           </>
         )}
 
         {selected ? (
-          <IonModal ref={modal} trigger="open-modal">
+          <IonModal
+            isOpen={isModalBarangOpen}
+            onDidDismiss={(status) => closeModal(status.detail.data)}
+          >
             <ModalTambahBarang barang={selected} />
           </IonModal>
         ) : null}
+
+        <IonModal isOpen={isModalCartOpen} onDidDismiss={() => setIsModalCartOpen(false)}>
+          <ModalCart></ModalCart>
+        </IonModal>
       </IonContent>
     </IonPage>
   )
