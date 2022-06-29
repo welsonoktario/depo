@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect, Route } from 'react-router-dom'
-import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact } from '@ionic/react'
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonSpinner,
+  setupIonicReact,
+} from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { useAtom } from 'jotai'
 import { authAtom } from './atoms'
@@ -58,7 +63,7 @@ const App: React.FC = () => {
   }, [])
 
   if (loading) {
-    return <IonSpinner className='spinner'></IonSpinner>
+    return <IonSpinner className="spinner"></IonSpinner>
   } else {
     return (
       <IonApp>
@@ -66,17 +71,17 @@ const App: React.FC = () => {
           <IonRouterOutlet>
             {auth && auth.user ? (
               <>
-                <Route exact path='/tabs'>
+                <Route exact path="/tabs">
                   <Tabs />
                 </Route>
-                <Redirect exact from='/' to='/tabs' />
+                <Redirect exact from="/" to="/tabs" />
               </>
             ) : (
               <>
-                <Route exact path='/login'>
+                <Route exact path="/login">
                   <Login />
                 </Route>
-                <Redirect exact from='/' to='/login' />
+                <Redirect exact from="/" to="/login" />
               </>
             )}
           </IonRouterOutlet>

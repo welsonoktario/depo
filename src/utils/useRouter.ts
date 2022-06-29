@@ -1,5 +1,5 @@
-import { UseIonRouterResult, IonRouterContext } from "@ionic/react"
-import React, { useContext } from "react"
+import { UseIonRouterResult, IonRouterContext } from '@ionic/react'
+import React, { useContext } from 'react'
 
 export function useIonRouter(): UseIonRouterResult {
   const context = useContext(IonRouterContext)

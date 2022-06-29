@@ -1,8 +1,8 @@
-import { useSetAtom } from "jotai"
-import React, { useState } from "react"
+import { useSetAtom } from 'jotai'
+import React, { useState } from 'react'
 
-import { Http } from "@capacitor-community/http"
-import { Storage } from "@capacitor/storage"
+import { Http } from '@capacitor-community/http'
+import { Storage } from '@capacitor/storage'
 import {
   IonButton,
   IonContent,
@@ -13,10 +13,10 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-} from "@ionic/react"
+} from '@ionic/react'
 
-import { authAtom } from "../../atoms"
-import { useIonRouter } from "../../utils"
+import { authAtom } from '../../atoms'
+import { useIonRouter } from '../../utils'
 
 const Login: React.FC = () => {
   const router = useIonRouter()

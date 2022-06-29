@@ -1,16 +1,16 @@
-import "./Riwayat.css"
+import './Riwayat.css'
 
-import React from "react"
+import React from 'react'
 
 import {
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
-  IonToolbar
-} from "@ionic/react"
+  IonToolbar,
+} from '@ionic/react'
 
-import ExploreContainer from "../../components/ExploreContainer"
+import ExploreContainer from '../../components/ExploreContainer'
 
 const Riwayat: React.FC = () => {
   return (
@@ -21,12 +21,12 @@ const Riwayat: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse='condense'>
+        <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size='large'>Riwayat</IonTitle>
+            <IonTitle size="large">Riwayat</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name='Riwayat page' />
+        <ExploreContainer name="Riwayat page" />
       </IonContent>
     </IonPage>
   )

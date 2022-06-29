@@ -12,7 +12,12 @@ export const FABCart: React.FC<{
   const [cart] = useAtom(cartAtom)
 
   return (
-    <IonFab vertical="bottom" horizontal="end" slot="fixed" onClick={props.onClick}>
+    <IonFab
+      vertical="bottom"
+      horizontal="end"
+      slot="fixed"
+      onClick={props.onClick}
+    >
       <IonFabButton>
         {cart.length ? <IonBadge color="danger">{cart.length}</IonBadge> : null}
         <IonIcon icon={cartIcon} />

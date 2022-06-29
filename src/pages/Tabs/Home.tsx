@@ -121,7 +121,10 @@ const Home: React.FC = () => {
           </IonModal>
         ) : null}
 
-        <IonModal isOpen={isModalCartOpen} onDidDismiss={() => setIsModalCartOpen(false)}>
+        <IonModal
+          isOpen={isModalCartOpen}
+          onDidDismiss={() => setIsModalCartOpen(false)}
+        >
           <ModalCart></ModalCart>
         </IonModal>
       </IonContent>

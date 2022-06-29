@@ -32,7 +32,11 @@ export const ModalCart: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonIcon onClick={close} slot="icon-only" icon={closeIcon}></IonIcon>
+            <IonIcon
+              onClick={close}
+              slot="icon-only"
+              icon={closeIcon}
+            ></IonIcon>
           </IonButtons>
           <IonTitle>Keranjang</IonTitle>
         </IonToolbar>

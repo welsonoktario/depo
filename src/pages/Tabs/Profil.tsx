@@ -1,5 +1,11 @@
 import React from 'react'
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react'
 import ExploreContainer from '../../components/ExploreContainer'
 import './Profil.css'
 
@@ -12,12 +18,12 @@ const Profil: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse='condense'>
+        <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size='large'>Profil</IonTitle>
+            <IonTitle size="large">Profil</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name='Profil page' />
+        <ExploreContainer name="Profil page" />
       </IonContent>
     </IonPage>
   )

@@ -9,6 +9,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonList,
   IonText,
   IonTitle,
   IonToolbar,
@@ -18,6 +19,7 @@ import { useAtom } from 'jotai'
 import React, { useState } from 'react'
 import { cartAtom } from '../atoms'
 import { Barang } from '../models'
+import './ModalTambahBarang.css'
 
 const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
   const [jumlah, setJumlah] = useState(1)
@@ -51,23 +53,28 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
-        <IonItem>
-          <IonLabel>Jumlah</IonLabel>
-          <IonInput
-            type="number"
-            placeholder="Jumlah"
-            value={jumlah}
-            onIonChange={(e) => setJumlah(e.target.value as number)}
-          ></IonInput>
-        </IonItem>
-        <IonItem>
-          <IonText>Subtotal: {props.barang.harga * jumlah}</IonText>
-        </IonItem>
+      <IonContent>
+        <IonList inset>
+          <IonItem className="pl">
+            <IonLabel position="floating">Jumlah</IonLabel>
+            <IonInput
+              type="number"
+              placeholder="1"
+              value={jumlah}
+              min={1}
+              onIonChange={(e) => setJumlah(e.target.value as number)}
+            ></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonText>Subtotal: {props.barang.harga * jumlah}</IonText>
+          </IonItem>
+        </IonList>
       </IonContent>
 
-      <IonFooter>
-        <IonButton onClick={() => addToCart(props.barang)}>Tambah</IonButton>
+      <IonFooter className="ion-padding">
+        <IonButton expand="block" onClick={() => addToCart(props.barang)}>
+          Tambah
+        </IonButton>
       </IonFooter>
     </>
   )
