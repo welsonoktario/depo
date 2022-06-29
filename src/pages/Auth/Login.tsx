@@ -6,10 +6,12 @@ import { Storage } from '@capacitor/storage'
 import {
   IonButton,
   IonContent,
+  IonFooter,
   IonHeader,
   IonInput,
   IonItem,
   IonLabel,
+  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -17,6 +19,8 @@ import {
 
 import { authAtom } from '../../atoms'
 import { useIonRouter } from '../../utils'
+
+import './Login.css'
 
 const Login: React.FC = () => {
   const router = useIonRouter()
@@ -29,6 +33,8 @@ const Login: React.FC = () => {
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
+
+  const register = (e: any) => router.push('/register', 'forward', 'push')
 
   const login = async (e: any) => {
     e.preventDefault()
@@ -66,32 +72,40 @@ const Login: React.FC = () => {
           <IonTitle>Login</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent>
         <form onSubmit={login}>
-          <IonItem>
-            <IonLabel position="stacked">Email</IonLabel>
-            <IonInput
-              name="email"
-              type="email"
-              value={form.email}
-              onIonChange={(e) => handleChange(e)}
-            ></IonInput>
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Password</IonLabel>
-            <IonInput
-              name="password"
-              type="password"
-              value={form.password}
-              onIonChange={(e) => handleChange(e)}
-            ></IonInput>
-          </IonItem>
+          <IonList inset>
+            <IonItem>
+              <IonLabel position="stacked">Email</IonLabel>
+              <IonInput
+                name="email"
+                type="email"
+                value={form.email}
+                onIonChange={(e) => handleChange(e)}
+              ></IonInput>
+            </IonItem>
+            <IonItem>
+              <IonLabel position="stacked">Password</IonLabel>
+              <IonInput
+                name="password"
+                type="password"
+                value={form.password}
+                onIonChange={(e) => handleChange(e)}
+              ></IonInput>
+            </IonItem>
+          </IonList>
 
-          <IonButton type="submit" expand="block">
+          <IonButton type="submit" expand="block" className="ion-margin">
             Login
           </IonButton>
         </form>
       </IonContent>
+
+      <IonFooter className="ion-padding">
+        <IonButton expand="block" fill="clear" onClick={register}>
+          Daftar Akun
+        </IonButton>
+      </IonFooter>
     </IonPage>
   )
 }

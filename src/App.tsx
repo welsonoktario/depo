@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import {
   IonApp,
+  IonPage,
   IonRouterOutlet,
   IonSpinner,
   setupIonicReact,
@@ -32,6 +33,7 @@ import '@ionic/react/css/display.css'
 /* Theme variables */
 import './theme/variables.css'
 import './App.css'
+import { Register } from './pages/Auth/Register'
 
 setupIonicReact()
 
@@ -71,16 +73,16 @@ const App: React.FC = () => {
           <IonRouterOutlet>
             {auth && auth.user ? (
               <>
-                <Route exact path="/tabs">
-                  <Tabs />
-                </Route>
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/tabs" component={Tabs} />
                 <Redirect exact from="/" to="/tabs" />
               </>
             ) : (
               <>
-                <Route exact path="/login">
-                  <Login />
-                </Route>
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/tabs" component={Tabs} />
                 <Redirect exact from="/" to="/login" />
               </>
             )}

@@ -2,7 +2,6 @@ import './Home.css'
 
 import { useAtom, useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
-import { Virtuoso } from 'react-virtuoso'
 
 import { Http } from '@capacitor-community/http'
 import {
@@ -30,6 +29,7 @@ const Home: React.FC = () => {
   const [selected, setSelected] = useState<Barang>()
   const [isModalBarangOpen, setIsModalBarangOpen] = useState(false)
   const [isModalCartOpen, setIsModalCartOpen] = useState(false)
+
   const auth = useAtomValue(authAtom)
 
   useEffect(() => {
@@ -92,22 +92,13 @@ const Home: React.FC = () => {
           <IonSpinner className="spinner"></IonSpinner>
         ) : (
           <>
-            {barangs.length > 0 ? (
-              <Virtuoso
-                initialItemCount={0}
-                className="ion-content-scroll-host"
-                totalCount={barangs.length}
-                itemContent={(i) => {
-                  return (
-                    <CardBarang
-                      key={i}
-                      barang={barangs[i]}
-                      onClick={(b) => openModal(b)}
-                    ></CardBarang>
-                  )
-                }}
-              ></Virtuoso>
-            ) : null}
+            {barangs.map((barang: any) => (
+              <CardBarang
+                key={barang.id}
+                barang={barang}
+                onClick={(b) => openModal(b)}
+              ></CardBarang>
+            ))}
             <FABCart onClick={() => setIsModalCartOpen(true)}></FABCart>
           </>
         )}
