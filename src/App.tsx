@@ -8,8 +8,8 @@ import {
   setupIonicReact,
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { useAtom } from 'jotai'
-import { authAtom } from './atoms'
+import { useAtom, useSetAtom } from 'jotai'
+import { authAtom, cartAtom } from './atoms'
 import { Storage } from '@capacitor/storage'
 import Login from './pages/Auth/Login'
 import Tabs from './pages/Tabs/Tabs'
@@ -40,12 +40,14 @@ setupIonicReact()
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [auth, setAuth] = useAtom(authAtom)
+  const setCart = useSetAtom(cartAtom)
 
   useEffect(() => {
     const getAuth = async () => {
       setLoading(true)
       const userJson = await Storage.get({ key: 'user' })
       const tokenString = await Storage.get({ key: 'token' })
+      const cartString = await Storage.get({ key: 'cart' })
 
       if (
         userJson.value &&
@@ -57,6 +59,10 @@ const App: React.FC = () => {
           user: JSON.parse(userJson.value),
           token: tokenString.value,
         })
+      }
+
+      if (cartString.value && cartString.value !== 'null') {
+        setCart(JSON.parse(cartString.value))
       }
       setLoading(false)
     }

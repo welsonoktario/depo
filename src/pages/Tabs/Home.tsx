@@ -1,12 +1,14 @@
 import './Home.css'
 
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
 
 import { Http } from '@capacitor-community/http'
 import {
   IonContent,
   IonHeader,
+  IonItem,
+  IonListHeader,
   IonModal,
   IonPage,
   IonSpinner,
@@ -14,23 +16,22 @@ import {
   IonToolbar,
 } from '@ionic/react'
 
+import { Storage } from '@capacitor/storage'
 import { authAtom, cartAtom } from '../../atoms'
 import CardBarang from '../../components/CardBarang'
 import { FABCart } from '../../components/FABCart'
-import ModalTambahBarang from '../../components/ModalTambahBarang'
-import { Barang } from '../../models'
-import { Storage } from '@capacitor/storage'
 import { ModalCart } from '../../components/ModalCart'
+import ModalTambahBarang from '../../components/ModalTambahBarang'
+import { Barang, Kategori } from '../../models'
 
 const Home: React.FC = () => {
-  const [cart, setCart] = useAtom(cartAtom)
-  const [barangs, setBarangs] = useState<Barang[]>([])
+  const auth = useAtomValue(authAtom)
+  const cart = useAtomValue(cartAtom)
+  const [kategoris, setKategoris] = useState<Kategori[]>([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState<Barang>()
   const [isModalBarangOpen, setIsModalBarangOpen] = useState(false)
   const [isModalCartOpen, setIsModalCartOpen] = useState(false)
-
-  const auth = useAtomValue(authAtom)
 
   useEffect(() => {
     loadBarangs()
@@ -39,25 +40,16 @@ const Home: React.FC = () => {
   const loadBarangs = async () => {
     setLoading(true)
 
-    const { value } = await Storage.get({ key: 'cart' })
-
-    try {
-      if (value) {
-        setCart(JSON.parse(value))
-      }
-    } catch (e) {
-      console.log(e)
-    }
-
     const res = await Http.get({
       url: process.env.REACT_APP_BASE_URL + '/barang',
       headers: {
         Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
       },
     })
 
     const { data } = await res.data
-    setBarangs(data)
+    setKategoris(data)
     setLoading(false)
   }
 
@@ -92,12 +84,24 @@ const Home: React.FC = () => {
           <IonSpinner className="spinner"></IonSpinner>
         ) : (
           <>
-            {barangs.map((barang: any) => (
-              <CardBarang
-                key={barang.id}
-                barang={barang}
-                onClick={(b) => openModal(b)}
-              ></CardBarang>
+            {kategoris.map((kategori: Kategori) => (
+              <div key={'k' + kategori.id}>
+                <IonListHeader className="list-header">
+                  {kategori.nama}
+                </IonListHeader>
+                {kategori.barangs.map((barang: Barang) => (
+                  <IonItem
+                    key={'b' + barang.id}
+                    lines="none"
+                    className="card-barang"
+                  >
+                    <CardBarang
+                      barang={barang}
+                      onClick={(b) => openModal(b)}
+                    ></CardBarang>
+                  </IonItem>
+                ))}
+              </div>
             ))}
             <FABCart onClick={() => setIsModalCartOpen(true)}></FABCart>
           </>

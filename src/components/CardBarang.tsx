@@ -1,13 +1,17 @@
 import React from 'react'
 
 import {
+  IonAvatar,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
+  IonItem,
 } from '@ionic/react'
 
 import { Barang } from '../models'
+
+import './CardBarang.css'
 
 const CardBarang: React.FC<{
   barang: Barang
@@ -17,14 +21,20 @@ const CardBarang: React.FC<{
 
   return (
     <IonCard
+      style={{ width: '100%' }}
       id="open-modal"
       button={true}
       onClick={() => props.onClick(props.barang)}
     >
-      <IonCardHeader>
-        <IonCardTitle>{props.barang.nama}</IonCardTitle>
-        <IonCardSubtitle>{harga(props.barang.harga)}</IonCardSubtitle>
-      </IonCardHeader>
+      <IonItem className='card-barang-item' lines="none">
+        <IonAvatar slot="start">
+          <img src="https://picsum.photos/150" alt={props.barang.nama} />
+        </IonAvatar>
+        <IonCardHeader>
+          <IonCardTitle>{props.barang.nama}</IonCardTitle>
+          <IonCardSubtitle>{harga(props.barang.harga)}</IonCardSubtitle>
+        </IonCardHeader>
+      </IonItem>
     </IonCard>
   )
 }

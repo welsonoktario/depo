@@ -17,7 +17,7 @@ import {
   IonToolbar,
 } from '@ionic/react'
 
-import { authAtom } from '../../atoms'
+import { authAtom, cartAtom } from '../../atoms'
 import { useIonRouter } from '../../utils'
 
 import './Login.css'
@@ -25,6 +25,7 @@ import './Login.css'
 const Login: React.FC = () => {
   const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
+  const setCart = useSetAtom(cartAtom)
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -53,8 +54,15 @@ const Login: React.FC = () => {
 
     if (status === 'OK') {
       await Storage.clear()
-      await Storage.set({ key: 'user', value: JSON.stringify(data.user) })
-      await Storage.set({ key: 'token', value: JSON.stringify(data.token) })
+      const cart = data.user.customer.barangs
+
+      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
+      setCart(cart)
+
+      delete data.user.customer.barangs
+
+      await Storage.set({ key: 'user', value: JSON.stringify(data) })
+      await Storage.set({ key: 'token', value: data.token })
       setAuth({
         user: data.user,
         token: data.token,
