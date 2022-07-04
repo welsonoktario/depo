@@ -98,7 +98,7 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
 
       <IonContent>
         <IonList inset>
-          <IonItem className="pl">
+          <IonItem>
             <IonLabel position="floating">Jumlah</IonLabel>
             <IonInput
               type="number"
@@ -108,8 +108,8 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
               onIonChange={(e) => setJumlah(e.target.value as number)}
             ></IonInput>
           </IonItem>
-          <IonItem>
-            <IonText>Subtotal: {props.barang.harga * jumlah}</IonText>
+          <IonItem className="subtotal">
+            <IonText>Subtotal: {"Rp " + (props.barang.harga * jumlah).toLocaleString('id-ID')}</IonText>
           </IonItem>
         </IonList>
       </IonContent>

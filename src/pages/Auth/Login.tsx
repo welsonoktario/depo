@@ -84,7 +84,7 @@ const Login: React.FC = () => {
         <form onSubmit={login}>
           <IonList inset>
             <IonItem>
-              <IonLabel position="stacked">Email</IonLabel>
+              <IonLabel position="floating">Email</IonLabel>
               <IonInput
                 name="email"
                 type="email"
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
               ></IonInput>
             </IonItem>
             <IonItem>
-              <IonLabel position="stacked">Password</IonLabel>
+              <IonLabel position="floating">Password</IonLabel>
               <IonInput
                 name="password"
                 type="password"

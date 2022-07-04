@@ -1,3 +1,7 @@
-.md > .pl {
-  padding-left: 16px;
+.md .subtotal {
+  padding-left: 0 !important;
+}
+
+.md .subtotal .item-native {
+  padding-left: 0 !important;
 }

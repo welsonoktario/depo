@@ -21,15 +21,9 @@ const Tabs: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route path="/tabs/home">
-              <Home />
-            </Route>
-            <Route exact path="/tabs/riwayat">
-              <Riwayat />
-            </Route>
-            <Route exact path="/tabs/profil">
-              <Profil />
-            </Route>
+            <Route path="/tabs/home" component={Home} />
+            <Route exact path="/tabs/riwayat" component={Riwayat} />
+            <Route exact path="/tabs/profil" component={Profil} />
             <Route exact path="/tabs">
               <Redirect to="/tabs/home" />
             </Route>
