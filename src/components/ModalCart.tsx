@@ -13,21 +13,36 @@ import {
   IonItemSliding,
   IonLabel,
   IonList,
+  IonNote,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
 import { close as closeIcon } from 'ionicons/icons'
-import { useAtom } from 'jotai'
-import React from 'react'
+import { useAtomValue } from 'jotai'
+import React, { useEffect, useState } from 'react'
 import { cartAtom } from '../atoms'
 
 import './ModalCart.css'
 
 export const ModalCart: React.FC = () => {
-  const [cart, setCart] = useAtom(cartAtom)
+  useEffect(() => {
+    setTotal(
+      'Rp ' +
+        cart
+          .reduce((prev, next) => prev + next.barang.harga, 0)
+          .toLocaleString('id-ID')
+    )
+  }, [])
+
+  const cart = useAtomValue(cartAtom)
+  const [total, setTotal] = useState('')
 
   const close = async () => {
     await modalController.dismiss(false)
+  }
+
+  const checkout = async () => {
+    await modalController.dismiss(true)
   }
 
   return (
@@ -50,12 +65,13 @@ export const ModalCart: React.FC = () => {
           <IonList inset lines="none">
             {cart.map((c, i) => (
               <IonItemSliding key={i}>
-                <IonItem>
+                <IonItem lines="none">
                   <div className="flex-col" style={{ width: '100%' }}>
                     <div className="flex-row justify-between items-center">
                       <IonLabel>{c.barang.nama}</IonLabel>
                       <IonBadge>
-                        x{c.jumlah} @ {'Rp ' + c.barang.harga.toLocaleString('id-ID')}
+                        x{c.jumlah} @{' '}
+                        {'Rp ' + c.barang.harga.toLocaleString('id-ID')}
                       </IonBadge>
                     </div>
                     <div className="flex-row justify-end">
@@ -84,7 +100,15 @@ export const ModalCart: React.FC = () => {
 
       {cart.length ? (
         <IonFooter className="ion-padding">
-          <IonButton expand="block">Checkout</IonButton>
+          <IonItem className="ion-margin-bottom" lines="none">
+            <IonLabel>Total</IonLabel>
+            <IonNote slot="end" color="primary">
+              {total}
+            </IonNote>
+          </IonItem>
+          <IonButton expand="block" onClick={checkout}>
+            Checkout
+          </IonButton>
         </IonFooter>
       ) : null}
     </>

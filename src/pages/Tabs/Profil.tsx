@@ -12,13 +12,13 @@ import {
 import { logOut } from 'ionicons/icons'
 import { useSetAtom } from 'jotai'
 import React from 'react'
+import { useHistory } from 'react-router'
 import { authAtom } from '../../atoms'
 import ExploreContainer from '../../components/ExploreContainer'
-import { useIonRouter } from '../../utils'
 import './Profil.css'
 
 const Profil: React.FC = () => {
-  const router = useIonRouter()
+  const history = useHistory()
   const setAuth = useSetAtom(authAtom)
 
   const logout = async () => {
@@ -28,7 +28,7 @@ const Profil: React.FC = () => {
       token: '',
     })
 
-    router.push('/login', 'root', 'replace')
+    history.replace('/login')
   }
 
   return (

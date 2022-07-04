@@ -1,6 +1,6 @@
 import './Home.css'
 
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
 
 import { Http } from '@capacitor-community/http'
@@ -17,16 +17,21 @@ import {
 } from '@ionic/react'
 
 import { Storage } from '@capacitor/storage'
-import { authAtom, cartAtom } from '../../atoms'
+import { authAtom, cartAtom, transaksisAtom } from '../../atoms'
 import CardBarang from '../../components/CardBarang'
 import { FABCart } from '../../components/FABCart'
 import { ModalCart } from '../../components/ModalCart'
 import ModalTambahBarang from '../../components/ModalTambahBarang'
 import { Barang, Kategori } from '../../models'
+import { useIonRouter } from '../../utils'
+
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const Home: React.FC = () => {
+  const router = useIonRouter()
   const auth = useAtomValue(authAtom)
-  const cart = useAtomValue(cartAtom)
+  const [cart, setCart] = useAtom(cartAtom)
+  const [transaksis, setTransaksis] = useAtom(transaksisAtom)
   const [kategoris, setKategoris] = useState<Kategori[]>([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState<Barang>()
@@ -41,7 +46,7 @@ const Home: React.FC = () => {
     setLoading(true)
 
     const res = await Http.get({
-      url: process.env.REACT_APP_BASE_URL + '/barang',
+      url: BASE_URL + '/barang',
       headers: {
         Authorization: `Bearer ${auth.token}`,
         Accept: 'application/json',
@@ -64,6 +69,38 @@ const Home: React.FC = () => {
     if (status) {
       await Storage.remove({ key: 'cart' })
       await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
+    }
+  }
+
+  const checkout = async (isCheckout: boolean) => {
+    setIsModalCartOpen(false)
+
+    if (isCheckout) {
+      const res = await Http.post({
+        url: BASE_URL + '/transaksi',
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        data: {
+          cart,
+        },
+      })
+
+      const { data, status } = res
+
+      console.log(status, data)
+
+      if (status !== 500) {
+        setCart([])
+        const oldTransaksis = transaksis
+        oldTransaksis.unshift(data.data)
+        setTransaksis(oldTransaksis)
+        router.push('/tabs/riwayat', 'root')
+      } else {
+        console.error(data)
+      }
     }
   }
 
@@ -118,7 +155,7 @@ const Home: React.FC = () => {
 
         <IonModal
           isOpen={isModalCartOpen}
-          onDidDismiss={() => setIsModalCartOpen(false)}
+          onDidDismiss={(status) => checkout(status.detail.data)}
         >
           <ModalCart></ModalCart>
         </IonModal>

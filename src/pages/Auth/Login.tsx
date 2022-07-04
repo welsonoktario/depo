@@ -67,7 +67,7 @@ const Login: React.FC = () => {
         user: data.user,
         token: data.token,
       })
-      router.push('/tabs', 'forward', 'replace')
+      router.push('/tabs')
     } else {
       alert(msg)
     }
@@ -82,8 +82,8 @@ const Login: React.FC = () => {
       </IonHeader>
       <IonContent>
         <form onSubmit={login}>
-          <IonList inset>
-            <IonItem>
+          <IonList inset lines="none">
+            <IonItem className="pl">
               <IonLabel position="floating">Email</IonLabel>
               <IonInput
                 name="email"
@@ -92,7 +92,7 @@ const Login: React.FC = () => {
                 onIonChange={(e) => handleChange(e)}
               ></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem lines="none" className="pl">
               <IonLabel position="floating">Password</IonLabel>
               <IonInput
                 name="password"

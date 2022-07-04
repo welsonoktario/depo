@@ -28,9 +28,14 @@ export const Register: React.FC = () => {
   const setAuth = useSetAtom(authAtom)
   const [form, setForm] = useState({
     nama: '',
+    telepon: '',
     email: '',
     password: '',
     alamat: '',
+    lokasi: {
+      lat: 0.0,
+      long: 0.0,
+    },
   })
 
   const handleChange = (e: any) => {
@@ -44,6 +49,7 @@ export const Register: React.FC = () => {
       data: form,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
       },
     })
 
@@ -75,8 +81,8 @@ export const Register: React.FC = () => {
       </IonHeader>
       <IonContent>
         <form onSubmit={register}>
-          <IonList inset>
-            <IonItem>
+          <IonList inset lines="none">
+            <IonItem className="pl">
               <IonLabel position="floating">Nama</IonLabel>
               <IonInput
                 name="nama"
@@ -87,7 +93,17 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem className="pl">
+              <IonLabel position="floating">Telepon</IonLabel>
+              <IonInput
+                name="telepon"
+                type="tel"
+                placeholder="Telepon"
+                value={form.telepon}
+                onIonChange={handleChange}
+              ></IonInput>
+            </IonItem>
+            <IonItem className="pl">
               <IonLabel position="floating">Email</IonLabel>
               <IonInput
                 name="email"
@@ -97,7 +113,7 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem className="pl">
               <IonLabel position="floating">Password</IonLabel>
               <IonInput
                 name="password"
@@ -107,7 +123,7 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem className="pl" lines="none">
               <IonLabel position="floating">Alamat</IonLabel>
               <IonTextarea
                 name="alamat"
