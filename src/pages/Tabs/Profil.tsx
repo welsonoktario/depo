@@ -34,7 +34,7 @@ const Profil: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonTitle>Profil</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={logout}>

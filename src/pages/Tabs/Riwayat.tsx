@@ -1,10 +1,11 @@
 import './Riwayat.css'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   IonContent,
   IonHeader,
+  IonModal,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -12,6 +13,9 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import { authAtom, transaksisAtom } from '../../atoms'
 import { Http } from '@capacitor-community/http'
+import CardRiwayat from '../../components/CardRiwayat'
+import ModalDetailTransaksi from '../../components/ModalDetailTransaksi'
+import { Transaksi } from '../../models'
 
 const Riwayat: React.FC = () => {
   useEffect(() => {
@@ -34,15 +38,24 @@ const Riwayat: React.FC = () => {
 
   const auth = useAtomValue(authAtom)
   const [transaksis, setTransaksis] = useAtom(transaksisAtom)
+  const [selected, setSelected] = useState<Transaksi>()
+  const [isOpen, setIsOpen] = useState(false)
 
   const transaksiCards = transaksis.map((transaksi) => (
-    <p key={transaksi.id}>{transaksi.id}</p>
+    <CardRiwayat
+      key={transaksi.id}
+      transaksi={transaksi}
+      onClick={(selectedTransaksi) => {
+        setSelected(selectedTransaksi)
+        setIsOpen(true)
+      }}
+    ></CardRiwayat>
   ))
 
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonTitle>Riwayat</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -53,7 +66,18 @@ const Riwayat: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <>{transaksis.length ? transaksiCards : <p>Kosong</p>}</>
+        <>
+          {transaksis.length ? transaksiCards : <p>Kosong</p>}
+          <IonModal
+            isOpen={isOpen}
+            canDismiss={true}
+            onDidDismiss={() => setIsOpen(false)}
+          >
+            {selected ? (
+              <ModalDetailTransaksi transaksi={selected}></ModalDetailTransaksi>
+            ) : null}
+          </IonModal>
+        </>
       </IonContent>
     </IonPage>
   )
