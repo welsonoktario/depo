@@ -1,38 +1,40 @@
-import { useAtom } from "jotai"
-import React from "react"
+import React from 'react'
 
 import {
+  IonAvatar,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
-  IonCardTitle
-} from "@ionic/react"
+  IonCardTitle,
+  IonItem,
+} from '@ionic/react'
 
-import { cartAtom } from "../atoms"
-import { Barang } from "../models"
+import { Barang } from '../models'
 
-const CardBarang: React.FC<Barang> = (props) => {
-  const [cart, setCart] = useAtom(cartAtom)
-  const harga = (harga: number) => `Rp ${harga.toLocaleString('id-ID')}`
+import './CardBarang.css'
 
-  const addToCart = (barang: Barang, jumlah: number) => {
-    const exist = cart.findIndex((item) => item.barang.id == barang.id)
-
-    if (exist != -1) {
-      const newCart = [...cart]
-      newCart[exist].jumlah += jumlah
-      setCart(newCart)
-    } else {
-      setCart([...cart, { barang, jumlah }])
-    }
-  }
+const CardBarang: React.FC<{
+  barang: Barang
+  onClick(barang: Barang): void
+}> = (props) => {
+  const harga = (num: number) => `Rp ${num.toLocaleString('id-ID')}`
 
   return (
-    <IonCard button={true} onClick={() => addToCart(props, 2)}>
-      <IonCardHeader>
-        <IonCardTitle>{props.nama}</IonCardTitle>
-        <IonCardSubtitle>{harga(props.harga)}</IonCardSubtitle>
-      </IonCardHeader>
+    <IonCard
+      style={{ width: '100%' }}
+      id="open-modal"
+      button={true}
+      onClick={() => props.onClick(props.barang)}
+    >
+      <IonItem className='card-barang-item' lines="none">
+        <IonAvatar slot="start">
+          <img src="https://picsum.photos/150" alt={props.barang.nama} />
+        </IonAvatar>
+        <IonCardHeader>
+          <IonCardTitle>{props.barang.nama}</IonCardTitle>
+          <IonCardSubtitle>{harga(props.barang.harga)}</IonCardSubtitle>
+        </IonCardHeader>
+      </IonItem>
     </IonCard>
   )
 }

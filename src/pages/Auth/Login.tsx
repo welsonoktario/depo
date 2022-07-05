@@ -1,24 +1,31 @@
+import { useSetAtom } from 'jotai'
+import React, { useState } from 'react'
+
+import { Http } from '@capacitor-community/http'
+import { Storage } from '@capacitor/storage'
 import {
   IonButton,
   IonContent,
+  IonFooter,
   IonHeader,
   IonInput,
   IonItem,
   IonLabel,
+  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { Storage } from '@capacitor/storage'
-import { Http } from '@capacitor-community/http'
-import React, { useState } from 'react'
-import { useSetAtom } from 'jotai'
-import { authAtom } from '../../atoms'
-import { useHistory } from 'react-router'
+
+import { authAtom, cartAtom } from '../../atoms'
+import { useIonRouter } from '../../utils'
+
+import './Login.css'
 
 const Login: React.FC = () => {
-  const history = useHistory()
+  const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
+  const setCart = useSetAtom(cartAtom)
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -27,6 +34,8 @@ const Login: React.FC = () => {
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
+
+  const register = (e: any) => router.push('/register', 'forward', 'push')
 
   const login = async (e: any) => {
     e.preventDefault()
@@ -43,15 +52,22 @@ const Login: React.FC = () => {
 
     const { status, msg, data } = await res.data
 
-    if (status == 'OK') {
+    if (status === 'OK') {
       await Storage.clear()
-      await Storage.set({ key: 'user', value: JSON.stringify(data.user) })
-      await Storage.set({ key: 'token', value: JSON.stringify(data.token) })
+      const cart = data.user.customer.barangs
+
+      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
+      setCart(cart)
+
+      delete data.user.customer.barangs
+
+      await Storage.set({ key: 'user', value: JSON.stringify(data) })
+      await Storage.set({ key: 'token', value: data.token })
       setAuth({
         user: data.user,
         token: data.token,
       })
-      history.replace('/tabs')
+      router.push('/tabs')
     } else {
       alert(msg)
     }
@@ -64,32 +80,40 @@ const Login: React.FC = () => {
           <IonTitle>Login</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className='ion-padding'>
+      <IonContent>
         <form onSubmit={login}>
-          <IonItem>
-            <IonLabel position='stacked'>Email</IonLabel>
-            <IonInput
-              name='email'
-              type='email'
-              value={form.email}
-              onIonChange={(e) => handleChange(e)}
-            ></IonInput>
-          </IonItem>
-          <IonItem>
-            <IonLabel position='stacked'>Password</IonLabel>
-            <IonInput
-              name='password'
-              type='password'
-              value={form.password}
-              onIonChange={(e) => handleChange(e)}
-            ></IonInput>
-          </IonItem>
+          <IonList inset lines="none">
+            <IonItem className="pl">
+              <IonLabel position="floating">Email</IonLabel>
+              <IonInput
+                name="email"
+                type="email"
+                value={form.email}
+                onIonChange={(e) => handleChange(e)}
+              ></IonInput>
+            </IonItem>
+            <IonItem lines="none" className="pl">
+              <IonLabel position="floating">Password</IonLabel>
+              <IonInput
+                name="password"
+                type="password"
+                value={form.password}
+                onIonChange={(e) => handleChange(e)}
+              ></IonInput>
+            </IonItem>
+          </IonList>
 
-          <IonButton type='submit' expand='block'>
+          <IonButton type="submit" expand="block" className="ion-margin">
             Login
           </IonButton>
         </form>
       </IonContent>
+
+      <IonFooter className="ion-padding">
+        <IonButton expand="block" fill="clear" onClick={register}>
+          Daftar Akun
+        </IonButton>
+      </IonFooter>
     </IonPage>
   )
 }

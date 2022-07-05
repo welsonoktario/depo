@@ -1,29 +1,42 @@
-import "./Home.css"
+import './Home.css'
 
-import { useAtom, useAtomValue } from "jotai"
-import React, { useEffect, useState } from "react"
-import { Virtuoso } from "react-virtuoso"
+import { useAtom, useAtomValue } from 'jotai'
+import React, { useEffect, useState } from 'react'
 
-import { Http } from "@capacitor-community/http"
+import { Http } from '@capacitor-community/http'
 import {
   IonContent,
   IonHeader,
+  IonItem,
+  IonListHeader,
+  IonModal,
   IonPage,
   IonSpinner,
   IonTitle,
-  IonToolbar
-} from "@ionic/react"
+  IonToolbar,
+} from '@ionic/react'
 
-import { authAtom, cartAtom } from "../../atoms"
-import CardBarang from "../../components/CardBarang"
-import Cart from "../../components/Cart"
-import { Barang } from "../../models"
+import { Storage } from '@capacitor/storage'
+import { authAtom, cartAtom, transaksisAtom } from '../../atoms'
+import CardBarang from '../../components/CardBarang'
+import { FABCart } from '../../components/FABCart'
+import { ModalCart } from '../../components/ModalCart'
+import ModalTambahBarang from '../../components/ModalTambahBarang'
+import { Barang, Kategori } from '../../models'
+import { useIonRouter } from '../../utils'
+
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const Home: React.FC = () => {
-  const [cart] = useAtom(cartAtom)
-  const [barangs, setBarangs] = useState<Barang[]>([])
-  const [loading, setLoading] = useState(false)
+  const router = useIonRouter()
   const auth = useAtomValue(authAtom)
+  const [cart, setCart] = useAtom(cartAtom)
+  const [transaksis, setTransaksis] = useAtom(transaksisAtom)
+  const [kategoris, setKategoris] = useState<Kategori[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selected, setSelected] = useState<Barang>()
+  const [isModalBarangOpen, setIsModalBarangOpen] = useState(false)
+  const [isModalCartOpen, setIsModalCartOpen] = useState(false)
 
   useEffect(() => {
     loadBarangs()
@@ -31,16 +44,64 @@ const Home: React.FC = () => {
 
   const loadBarangs = async () => {
     setLoading(true)
+
     const res = await Http.get({
-      url: process.env.REACT_APP_BASE_URL + '/barang',
+      url: BASE_URL + '/barang',
       headers: {
         Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
       },
     })
 
     const { data } = await res.data
-    setBarangs(data)
+    setKategoris(data)
     setLoading(false)
+  }
+
+  const openModal = (barang: Barang) => {
+    setSelected(barang)
+    setIsModalBarangOpen(true)
+  }
+
+  const closeModal = async (status: boolean) => {
+    setIsModalBarangOpen(false)
+
+    if (status) {
+      await Storage.remove({ key: 'cart' })
+      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
+    }
+  }
+
+  const checkout = async (isCheckout: boolean) => {
+    setIsModalCartOpen(false)
+
+    if (isCheckout) {
+      const res = await Http.post({
+        url: BASE_URL + '/transaksi',
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        data: {
+          cart,
+        },
+      })
+
+      const { data, status } = res
+
+      console.log(status, data)
+
+      if (status !== 500) {
+        setCart([])
+        const oldTransaksis = transaksis
+        oldTransaksis.unshift(data.data)
+        setTransaksis(oldTransaksis)
+        router.push('/tabs/riwayat', 'root')
+      } else {
+        console.error(data)
+      }
+    }
   }
 
   return (
@@ -51,35 +112,53 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse='condense'>
+        <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size='large'>Home</IonTitle>
+            <IonTitle size="large">Home</IonTitle>
           </IonToolbar>
         </IonHeader>
         {loading ? (
-          <IonSpinner className='spinner'></IonSpinner>
+          <IonSpinner className="spinner"></IonSpinner>
         ) : (
           <>
-            {cart.length ? <Cart /> : null}
-            {barangs.length > 0 ? (
-              <Virtuoso
-                initialItemCount={0}
-                className='ion-content-scroll-host'
-                totalCount={barangs.length}
-                itemContent={(i) => {
-                  return (
+            {kategoris.map((kategori: Kategori) => (
+              <div key={'k' + kategori.id}>
+                <IonListHeader className="list-header">
+                  {kategori.nama}
+                </IonListHeader>
+                {kategori.barangs.map((barang: Barang) => (
+                  <IonItem
+                    key={'b' + barang.id}
+                    lines="none"
+                    className="card-barang"
+                  >
                     <CardBarang
-                      id={barangs[i].id}
-                      nama={barangs[i].nama}
-                      harga={barangs[i].harga}
-                      key={i}
+                      barang={barang}
+                      onClick={(b) => openModal(b)}
                     ></CardBarang>
-                  )
-                }}
-              ></Virtuoso>
-            ) : null}
+                  </IonItem>
+                ))}
+              </div>
+            ))}
+            <FABCart onClick={() => setIsModalCartOpen(true)}></FABCart>
           </>
         )}
+
+        {selected ? (
+          <IonModal
+            isOpen={isModalBarangOpen}
+            onDidDismiss={(status) => closeModal(status.detail.data)}
+          >
+            <ModalTambahBarang barang={selected} />
+          </IonModal>
+        ) : null}
+
+        <IonModal
+          isOpen={isModalCartOpen}
+          onDidDismiss={(status) => checkout(status.detail.data)}
+        >
+          <ModalCart></ModalCart>
+        </IonModal>
       </IonContent>
     </IonPage>
   )

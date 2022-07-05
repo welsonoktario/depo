@@ -1,0 +1,7 @@
+.md .subtotal {
+  padding-left: 0 !important;
+}
+
+.md .subtotal .item-native {
+  padding-left: 0 !important;
+}

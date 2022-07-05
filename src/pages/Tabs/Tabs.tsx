@@ -21,29 +21,23 @@ const Tabs: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route path='/tabs/home'>
-              <Home />
-            </Route>
-            <Route exact path='/tabs/riwayat'>
-              <Riwayat />
-            </Route>
-            <Route exact path='/tabs/profil'>
-              <Profil />
-            </Route>
-            <Route exact path='/tabs'>
-              <Redirect to='/tabs/home' />
+            <Route path="/tabs/home" component={Home} />
+            <Route exact path="/tabs/riwayat" component={Riwayat} />
+            <Route exact path="/tabs/profil" component={Profil} />
+            <Route exact path="/tabs">
+              <Redirect to="/tabs/home" />
             </Route>
           </IonRouterOutlet>
-          <IonTabBar slot='bottom'>
-            <IonTabButton tab='/tabs/home' href='/tabs/home'>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="/tabs/home" href="/tabs/home">
               <IonIcon icon={home} />
               <IonLabel>Home</IonLabel>
             </IonTabButton>
-            <IonTabButton tab='/tabs/riwayat' href='/tabs/riwayat'>
+            <IonTabButton tab="/tabs/riwayat" href="/tabs/riwayat">
               <IonIcon icon={time} />
               <IonLabel>Riwayat</IonLabel>
             </IonTabButton>
-            <IonTabButton tab='/tabs/profil' href='/tabs/profil'>
+            <IonTabButton tab="/tabs/profil" href="/tabs/profil">
               <IonIcon icon={person} />
               <IonLabel>Profil</IonLabel>
             </IonTabButton>

@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Redirect, Route, useHistory } from 'react-router-dom'
-import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact } from '@ionic/react'
+import { Redirect, Route } from 'react-router-dom'
+import {
+  IonApp,
+  IonPage,
+  IonRouterOutlet,
+  IonSpinner,
+  setupIonicReact,
+} from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { useAtom } from 'jotai'
-import { authAtom } from './atoms'
+import { useAtom, useSetAtom } from 'jotai'
+import { authAtom, cartAtom } from './atoms'
 import { Storage } from '@capacitor/storage'
 import Login from './pages/Auth/Login'
 import Tabs from './pages/Tabs/Tabs'
@@ -27,29 +33,36 @@ import '@ionic/react/css/display.css'
 /* Theme variables */
 import './theme/variables.css'
 import './App.css'
+import { Register } from './pages/Auth/Register'
 
 setupIonicReact()
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [auth, setAuth] = useAtom(authAtom)
+  const setCart = useSetAtom(cartAtom)
 
   useEffect(() => {
     const getAuth = async () => {
       setLoading(true)
       const userJson = await Storage.get({ key: 'user' })
       const tokenString = await Storage.get({ key: 'token' })
+      const cartString = await Storage.get({ key: 'cart' })
 
       if (
         userJson.value &&
-        userJson.value != 'null' &&
+        userJson.value !== 'null' &&
         tokenString.value &&
-        tokenString.value != 'null'
+        tokenString.value !== 'null'
       ) {
         setAuth({
           user: JSON.parse(userJson.value),
           token: tokenString.value,
         })
+      }
+
+      if (cartString.value && cartString.value !== 'null') {
+        setCart(JSON.parse(cartString.value))
       }
       setLoading(false)
     }
@@ -58,7 +71,7 @@ const App: React.FC = () => {
   }, [])
 
   if (loading) {
-    return <IonSpinner className='spinner'></IonSpinner>
+    return <IonSpinner className="spinner"></IonSpinner>
   } else {
     return (
       <IonApp>
@@ -66,17 +79,17 @@ const App: React.FC = () => {
           <IonRouterOutlet>
             {auth && auth.user ? (
               <>
-                <Route exact path='/tabs'>
-                  <Tabs />
-                </Route>
-                <Redirect exact from='/' to='/tabs' />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/tabs" component={Tabs} />
+                <Redirect exact from="/" to="/tabs" />
               </>
             ) : (
               <>
-                <Route exact path='/login'>
-                  <Login />
-                </Route>
-                <Redirect exact from='/' to='/login' />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/tabs" component={Tabs} />
+                <Redirect exact from="/" to="/login" />
               </>
             )}
           </IonRouterOutlet>
