@@ -40,14 +40,12 @@ setupIonicReact()
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [auth, setAuth] = useAtom(authAtom)
-  const setCart = useSetAtom(cartAtom)
 
   useEffect(() => {
     const getAuth = async () => {
       setLoading(true)
       const userJson = await Storage.get({ key: 'user' })
       const tokenString = await Storage.get({ key: 'token' })
-      const cartString = await Storage.get({ key: 'cart' })
 
       if (
         userJson.value &&
@@ -61,9 +59,6 @@ const App: React.FC = () => {
         })
       }
 
-      if (cartString.value && cartString.value !== 'null') {
-        setCart(JSON.parse(cartString.value))
-      }
       setLoading(false)
     }
 

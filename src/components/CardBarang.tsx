@@ -26,9 +26,15 @@ const CardBarang: React.FC<{
       button={true}
       onClick={() => props.onClick(props.barang)}
     >
-      <IonItem className='card-barang-item' lines="none">
+      <IonItem className="card-barang-item" lines="none">
         <IonAvatar slot="start">
-          <img src="https://picsum.photos/150" alt={props.barang.nama} />
+          <img
+            src={
+              props.barang.gambar ||
+              `https://ui-avatars.com/api/?name=${props.barang.nama}`
+            }
+            alt={props.barang.nama}
+          />
         </IonAvatar>
         <IonCardHeader>
           <IonCardTitle>{props.barang.nama}</IonCardTitle>

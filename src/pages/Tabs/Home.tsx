@@ -4,6 +4,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
 
 import { Http } from '@capacitor-community/http'
+import { Dialog } from '@capacitor/dialog'
 import {
   IonContent,
   IonHeader,
@@ -16,7 +17,6 @@ import {
   IonToolbar,
 } from '@ionic/react'
 
-import { Storage } from '@capacitor/storage'
 import { authAtom, cartAtom, transaksisAtom } from '../../atoms'
 import CardBarang from '../../components/CardBarang'
 import { FABCart } from '../../components/FABCart'
@@ -40,6 +40,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     loadBarangs()
+    loadKeranjang()
   }, [])
 
   const loadBarangs = async () => {
@@ -58,18 +59,29 @@ const Home: React.FC = () => {
     setLoading(false)
   }
 
+  const loadKeranjang = async () => {
+    setLoading(true)
+
+    const res = await Http.get({
+      url: BASE_URL + '/keranjang',
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
+      },
+    })
+
+    const { data } = await res.data
+    setCart(data)
+    setLoading(false)
+  }
+
   const openModal = (barang: Barang) => {
     setSelected(barang)
     setIsModalBarangOpen(true)
   }
 
-  const closeModal = async (status: boolean) => {
+  const closeModal = async () => {
     setIsModalBarangOpen(false)
-
-    if (status) {
-      await Storage.remove({ key: 'cart' })
-      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
-    }
   }
 
   const checkout = async (isCheckout: boolean) => {
@@ -99,7 +111,10 @@ const Home: React.FC = () => {
         setTransaksis(oldTransaksis)
         router.push('/tabs/riwayat', 'root')
       } else {
-        console.error(data)
+        await Dialog.alert({
+          title: 'Error',
+          message: data.msg,
+        })
       }
     }
   }
@@ -147,7 +162,7 @@ const Home: React.FC = () => {
         {selected ? (
           <IonModal
             isOpen={isModalBarangOpen}
-            onDidDismiss={(status) => closeModal(status.detail.data)}
+            onDidDismiss={() => closeModal()}
           >
             <ModalTambahBarang barang={selected} />
           </IonModal>

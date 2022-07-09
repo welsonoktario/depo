@@ -56,7 +56,6 @@ const Login: React.FC = () => {
       await Storage.clear()
       const cart = data.user.customer.barangs
 
-      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
       setCart(cart)
 
       delete data.user.customer.barangs

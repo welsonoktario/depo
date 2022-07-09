@@ -1,5 +1,7 @@
+import { Http } from '@capacitor-community/http'
 import { modalController } from '@ionic/core'
 import {
+  IonAvatar,
   IonBadge,
   IonButton,
   IonButtons,
@@ -7,6 +9,7 @@ import {
   IonFooter,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonItemOption,
   IonItemOptions,
@@ -17,25 +20,19 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { close as closeIcon } from 'ionicons/icons'
-import { useAtomValue } from 'jotai'
-import React, { useEffect, useState } from 'react'
-import { cartAtom } from '../atoms'
+import { add, close as closeIcon, remove } from 'ionicons/icons'
+import { useAtom, useAtomValue } from 'jotai'
+import React from 'react'
+import { authAtom, cartAtom } from '../atoms'
+import { CartItem } from '../models'
 
 import './ModalCart.css'
 
-export const ModalCart: React.FC = () => {
-  useEffect(() => {
-    setTotal(
-      'Rp ' +
-        cart
-          .reduce((prev, next) => prev + next.barang.harga, 0)
-          .toLocaleString('id-ID')
-    )
-  }, [])
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
-  const cart = useAtomValue(cartAtom)
-  const [total, setTotal] = useState('')
+export const ModalCart: React.FC = () => {
+  const auth = useAtomValue(authAtom)
+  const [cart, setCart] = useAtom(cartAtom)
 
   const close = async () => {
     await modalController.dismiss(false)
@@ -44,6 +41,51 @@ export const ModalCart: React.FC = () => {
   const checkout = async () => {
     await modalController.dismiss(true)
   }
+
+  const deleteItem = (barang: number) => {
+    Http.del({
+      url: BASE_URL + '/keranjang/' + barang,
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+
+    setCart(cart.filter((c) => c.barang.id !== barang))
+  }
+
+  const editItem = (index: number, tipe: 'inc' | 'dec') => {
+    const oldCart = JSON.parse(JSON.stringify(cart)) as CartItem[]
+
+    if (tipe === 'inc') {
+      oldCart[index].jumlah = +oldCart[index].jumlah + +1
+    } else if (tipe === 'dec') {
+      if (oldCart[index].jumlah > 1) {
+        oldCart[index].jumlah = +oldCart[index].jumlah - +1
+      }
+    }
+
+    Http.patch({
+      url: BASE_URL + '/keranjang/' + cart[index].barang.id,
+      data: {
+        jumlah: oldCart[index].jumlah,
+      },
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+
+    setCart(oldCart)
+  }
+
+  const total =
+    'Rp ' +
+    cart
+      .reduce((prev, next) => prev + next.barang.harga * next.jumlah, 0)
+      .toLocaleString('id-ID')
 
   return (
     <>
@@ -65,36 +107,59 @@ export const ModalCart: React.FC = () => {
           <IonList inset lines="none">
             {cart.map((c, i) => (
               <IonItemSliding key={i}>
-                <IonItem lines="none">
-                  <div className="flex-col" style={{ width: '100%' }}>
-                    <div className="flex-row justify-between items-center">
-                      <IonLabel>{c.barang.nama}</IonLabel>
-                      <IonBadge>
-                        x{c.jumlah} @{' '}
-                        {'Rp ' + c.barang.harga.toLocaleString('id-ID')}
-                      </IonBadge>
-                    </div>
-                    <div className="flex-row justify-end">
-                      <p>
+                <IonItem>
+                  <IonAvatar slot="start" className="ion-margin-start">
+                    <img
+                      src={c.barang.gambar || `https://ui-avatars.com/api/?name=${c.barang.nama}`}
+                      alt={c.barang.nama}
+                    />
+                  </IonAvatar>
+                  <IonLabel className="ion-margin-start">
+                    {c.barang.nama}
+                  </IonLabel>
+                  <div className="flex-col items-end ion-margin-top" slot="end">
+                    <IonBadge>
+                      <p style={{ margin: 0 }}>
                         {'Rp ' +
                           (c.jumlah * c.barang.harga).toLocaleString('id-ID')}
                       </p>
+                    </IonBadge>
+                    <div
+                      className="inline-flex items-center justify-center"
+                      style={{ marginTop: '8px', width: '100%' }}
+                    >
+                      <IonIcon
+                        onClick={() => editItem(i, 'dec')}
+                        slot="icon-only"
+                        icon={remove}
+                      ></IonIcon>
+                      <IonInput
+                        style={{ width: '40px', textAlign: 'center' }}
+                        min="1"
+                        value={cart[i].jumlah}
+                        type="number"
+                      ></IonInput>
+                      <IonIcon
+                        onClick={() => editItem(i, 'inc')}
+                        slot="icon-only"
+                        icon={add}
+                      ></IonIcon>
                     </div>
                   </div>
                 </IonItem>
                 <IonItemOptions side="end">
-                  <IonItemOption color="danger" onClick={() => {}}>
+                  <IonItemOption
+                    color="danger"
+                    onClick={() => deleteItem(c.barang.id)}
+                  >
                     Hapus
-                  </IonItemOption>
-                  <IonItemOption color="primary" onClick={() => {}}>
-                    Edit
                   </IonItemOption>
                 </IonItemOptions>
               </IonItemSliding>
             ))}
           </IonList>
         ) : (
-          <p>Belum ada barang</p>
+          <p className="ion-margin-start">Belum ada barang</p>
         )}
       </IonContent>
 

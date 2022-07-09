@@ -7,8 +7,11 @@ import {
   IonHeader,
   IonModal,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonTitle,
   IonToolbar,
+  RefresherEventDetail,
 } from '@ionic/react'
 import { useAtom, useAtomValue } from 'jotai'
 import { authAtom, transaksisAtom } from '../../atoms'
@@ -19,27 +22,31 @@ import { Transaksi } from '../../models'
 
 const Riwayat: React.FC = () => {
   useEffect(() => {
-    const loadTransaksis = async () => {
-      const res = await Http.get({
-        url: process.env.REACT_APP_BASE_URL + '/transaksi',
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-          Accept: 'application/json',
-        },
-      })
-
-      const { data } = await res.data
-
-      setTransaksis(data)
-    }
-
-    loadTransaksis()
+    loadTransaksis(null)
   }, [])
 
   const auth = useAtomValue(authAtom)
   const [transaksis, setTransaksis] = useAtom(transaksisAtom)
   const [selected, setSelected] = useState<Transaksi>()
   const [isOpen, setIsOpen] = useState(false)
+
+  const loadTransaksis = async (event: any) => {
+    const res = await Http.get({
+      url: process.env.REACT_APP_BASE_URL + '/transaksi',
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
+      },
+    })
+
+    const { data } = await res.data
+
+    setTransaksis(data)
+
+    if (event) {
+      event.detail.complete()
+    }
+  }
 
   const transaksiCards = transaksis.map((transaksi) => (
     <CardRiwayat
@@ -66,18 +73,20 @@ const Riwayat: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <>
-          {transaksis.length ? transaksiCards : <p>Kosong</p>}
-          <IonModal
-            isOpen={isOpen}
-            canDismiss={true}
-            onDidDismiss={() => setIsOpen(false)}
-          >
-            {selected ? (
-              <ModalDetailTransaksi transaksi={selected}></ModalDetailTransaksi>
-            ) : null}
-          </IonModal>
-        </>
+        <IonRefresher slot="fixed" onIonRefresh={loadTransaksis}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
+
+        {transaksis.length ? transaksiCards : <p>Kosong</p>}
+        <IonModal
+          isOpen={isOpen}
+          canDismiss={true}
+          onDidDismiss={() => setIsOpen(false)}
+        >
+          {selected ? (
+            <ModalDetailTransaksi transaksi={selected}></ModalDetailTransaksi>
+          ) : null}
+        </IonModal>
       </IonContent>
     </IonPage>
   )
