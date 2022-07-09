@@ -1,24 +1,25 @@
 import { Storage } from '@capacitor/storage'
 import {
-  IonButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { logOut } from 'ionicons/icons'
+import { lockClosedOutline, logOutOutline, pinOutline } from 'ionicons/icons'
 import { useSetAtom } from 'jotai'
 import React from 'react'
 import { useHistory } from 'react-router'
-import { authAtom } from '../../atoms'
-import ExploreContainer from '../../components/ExploreContainer'
+import { authAtom } from '../../../atoms'
+import { useIonRouter } from '../../../utils'
 import './Profil.css'
 
 const Profil: React.FC = () => {
-  const history = useHistory()
+  const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
 
   const logout = async () => {
@@ -28,7 +29,7 @@ const Profil: React.FC = () => {
       token: '',
     })
 
-    history.replace('/login')
+    router.push('/login', 'back', 'replace')
   }
 
   return (
@@ -36,11 +37,6 @@ const Profil: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonTitle>Profil</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={logout}>
-              <IonIcon slot="icon-only" icon={logOut}></IonIcon>
-            </IonButton>
-          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -49,7 +45,21 @@ const Profil: React.FC = () => {
             <IonTitle size="large">Profil</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name="Profil page" />
+
+        <IonList inset>
+          <IonItem button detail>
+            <IonIcon icon={pinOutline} slot="start"></IonIcon>
+            <IonLabel>Alamat</IonLabel>
+          </IonItem>
+          <IonItem button detail>
+            <IonIcon icon={lockClosedOutline} slot="start"></IonIcon>
+            <IonLabel>Ubah Password</IonLabel>
+          </IonItem>
+          <IonItem lines="none" onClick={logout} button detail>
+            <IonIcon color="danger" icon={logOutOutline} slot="start"></IonIcon>
+            <IonLabel color="danger">Keluar</IonLabel>
+          </IonItem>
+        </IonList>
       </IonContent>
     </IonPage>
   )

@@ -88,9 +88,11 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
   return (
     <>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonIcon onClick={cancel} slot="icon-only" icon={close}></IonIcon>
+            <IonButton>
+              <IonIcon onClick={cancel} slot="icon-only" icon={close} />
+            </IonButton>
           </IonButtons>
           <IonTitle>Tambah ke Keranjang</IonTitle>
         </IonToolbar>
@@ -98,7 +100,7 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
 
       <IonContent>
         <IonList inset>
-          <IonItem>
+          <IonItem className="jumlah">
             <IonLabel position="floating">Jumlah</IonLabel>
             <IonInput
               type="number"
@@ -109,7 +111,10 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
             ></IonInput>
           </IonItem>
           <IonItem className="subtotal">
-            <IonText>Subtotal: {"Rp " + (props.barang.harga * jumlah).toLocaleString('id-ID')}</IonText>
+            <IonText>
+              Subtotal:{' '}
+              {'Rp ' + (props.barang.harga * jumlah).toLocaleString('id-ID')}
+            </IonText>
           </IonItem>
         </IonList>
       </IonContent>

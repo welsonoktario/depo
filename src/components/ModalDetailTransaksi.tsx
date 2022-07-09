@@ -1,6 +1,7 @@
 import { modalController } from '@ionic/core'
 import {
   IonBadge,
+  IonButton,
   IonButtons,
   IonContent,
   IonFooter,
@@ -82,11 +83,13 @@ const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (props) => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonIcon
-              onClick={close}
-              slot="icon-only"
-              icon={closeIcon}
-            ></IonIcon>
+            <IonButton>
+              <IonIcon
+                onClick={close}
+                slot="icon-only"
+                icon={closeIcon}
+              ></IonIcon>
+            </IonButton>
           </IonButtons>
           <IonTitle>Detail Transaksi</IonTitle>
         </IonToolbar>

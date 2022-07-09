@@ -90,13 +90,15 @@ export const ModalCart: React.FC = () => {
   return (
     <>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonIcon
-              onClick={close}
-              slot="icon-only"
-              icon={closeIcon}
-            ></IonIcon>
+            <IonButton>
+              <IonIcon
+                onClick={close}
+                slot="icon-only"
+                icon={closeIcon}
+              ></IonIcon>
+            </IonButton>
           </IonButtons>
           <IonTitle>Keranjang</IonTitle>
         </IonToolbar>
@@ -110,7 +112,10 @@ export const ModalCart: React.FC = () => {
                 <IonItem>
                   <IonAvatar slot="start" className="ion-margin-start">
                     <img
-                      src={c.barang.gambar || `https://ui-avatars.com/api/?name=${c.barang.nama}`}
+                      src={
+                        c.barang.gambar ||
+                        `https://ui-avatars.com/api/?name=${c.barang.nama}`
+                      }
                       alt={c.barang.nama}
                     />
                   </IonAvatar>
