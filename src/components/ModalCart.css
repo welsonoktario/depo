@@ -1,3 +1,8 @@
+.ripple-parent {
+  position: relative;
+  overflow: hidden;
+}
+
 .flex-row {
   display: flex;
   flex-direction: row;
@@ -8,16 +13,28 @@
   flex-direction: column;
 }
 
+.inline-flex {
+  display: inline-flex;
+}
+
 .justify-between {
   justify-content: space-between;
 }
 
 .justify-end {
-  justify-content: end;
+  justify-content: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .items-center {
   align-items: center;
+}
+
+.items-end {
+  align-items: flex-end;
 }
 
 .md ion-item {

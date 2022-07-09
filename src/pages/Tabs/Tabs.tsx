@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   IonApp,
   IonIcon,
@@ -9,11 +8,12 @@ import {
   IonTabs,
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
+import { home, person, time } from 'ionicons/icons'
+import React from 'react'
 import { Redirect, Route } from 'react-router'
-import { home, time, person } from 'ionicons/icons'
-import Home from './Home'
-import Riwayat from './Riwayat'
-import Profil from './Profil'
+import Home from './Home/Home'
+import Profil from './Profil/Profil'
+import Riwayat from './Riwayat/Riwayat'
 
 const Tabs: React.FC = () => {
   return (
@@ -21,7 +21,7 @@ const Tabs: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route path="/tabs/home" component={Home} />
+            <Route exact path="/tabs/home" component={Home} />
             <Route exact path="/tabs/riwayat" component={Riwayat} />
             <Route exact path="/tabs/profil" component={Profil} />
             <Route exact path="/tabs">

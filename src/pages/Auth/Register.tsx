@@ -1,3 +1,5 @@
+import { Http } from '@capacitor-community/http'
+import { Storage } from '@capacitor/storage'
 import {
   IonBackButton,
   IonButton,
@@ -5,6 +7,7 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -14,17 +17,16 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { Storage } from '@capacitor/storage'
-import { Http } from '@capacitor-community/http'
-import React, { useState } from 'react'
 import { useSetAtom } from 'jotai'
+import React, { useState } from 'react'
 import { authAtom } from '../../atoms'
-import { useHistory } from 'react-router'
 
+import { arrowBack } from 'ionicons/icons'
+import { useIonRouter } from '../../utils'
 import './Register.css'
 
 export const Register: React.FC = () => {
-  const history = useHistory()
+  const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
   const [form, setForm] = useState({
     nama: '',
@@ -63,18 +65,22 @@ export const Register: React.FC = () => {
         user: data.user,
         token: data.token,
       })
-      history.replace('/tabs')
+      router.push('/tabs', 'forward', 'replace')
     } else {
       alert(msg)
     }
   }
 
+  const back = (e: any) => {
+    router.goBack()
+  }
+
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton></IonBackButton>
+            <IonBackButton defaultHref="login" />
           </IonButtons>
           <IonTitle>Daftar Akun</IonTitle>
         </IonToolbar>

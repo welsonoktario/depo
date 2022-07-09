@@ -5,3 +5,7 @@
 .md .subtotal .item-native {
   padding-left: 0 !important;
 }
+
+.md .jumlah {
+  padding-left: 16px !important;
+}

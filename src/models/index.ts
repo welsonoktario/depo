@@ -4,4 +4,5 @@ export * from './depo';
 export * from './kategori';
 export * from './kurir';
 export * from './transaksi';
+export * from './transaksiDetail';
 export * from './user';

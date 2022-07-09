@@ -35,7 +35,7 @@ const Login: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const register = (e: any) => router.push('/register', 'forward', 'push')
+  // const register = (e: any) => router.push('/register', 'forward', 'push')
 
   const login = async (e: any) => {
     e.preventDefault()
@@ -56,7 +56,6 @@ const Login: React.FC = () => {
       await Storage.clear()
       const cart = data.user.customer.barangs
 
-      await Storage.set({ key: 'cart', value: JSON.stringify(cart) })
       setCart(cart)
 
       delete data.user.customer.barangs
@@ -76,7 +75,7 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonTitle>Login</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -110,7 +109,12 @@ const Login: React.FC = () => {
       </IonContent>
 
       <IonFooter className="ion-padding">
-        <IonButton expand="block" fill="clear" onClick={register}>
+        <IonButton
+          expand="block"
+          fill="clear"
+          routerLink="/register"
+          routerDirection="forward"
+        >
           Daftar Akun
         </IonButton>
       </IonFooter>

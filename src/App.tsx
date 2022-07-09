@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import { Storage } from '@capacitor/storage'
 import {
   IonApp,
-  IonPage,
   IonRouterOutlet,
   IonSpinner,
   setupIonicReact,
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { useAtom, useSetAtom } from 'jotai'
-import { authAtom, cartAtom } from './atoms'
-import { Storage } from '@capacitor/storage'
+import { useAtom } from 'jotai'
+import React, { useEffect, useState } from 'react'
+import { Redirect, Route, RouteProps, Switch } from 'react-router-dom'
+import { authAtom } from './atoms'
 import Login from './pages/Auth/Login'
-import Tabs from './pages/Tabs/Tabs'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -23,31 +21,30 @@ import '@ionic/react/css/structure.css'
 import '@ionic/react/css/typography.css'
 
 /* Optional CSS utils that can be commented out */
-import '@ionic/react/css/padding.css'
+import '@ionic/react/css/display.css'
+import '@ionic/react/css/flex-utils.css'
 import '@ionic/react/css/float-elements.css'
+import '@ionic/react/css/padding.css'
 import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
-import '@ionic/react/css/flex-utils.css'
-import '@ionic/react/css/display.css'
 
 /* Theme variables */
-import './theme/variables.css'
 import './App.css'
 import { Register } from './pages/Auth/Register'
+import './theme/variables.css'
+import Tabs from './pages/Tabs/Tabs'
 
 setupIonicReact()
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [auth, setAuth] = useAtom(authAtom)
-  const setCart = useSetAtom(cartAtom)
 
   useEffect(() => {
     const getAuth = async () => {
       setLoading(true)
       const userJson = await Storage.get({ key: 'user' })
       const tokenString = await Storage.get({ key: 'token' })
-      const cartString = await Storage.get({ key: 'cart' })
 
       if (
         userJson.value &&
@@ -61,14 +58,32 @@ const App: React.FC = () => {
         })
       }
 
-      if (cartString.value && cartString.value !== 'null') {
-        setCart(JSON.parse(cartString.value))
-      }
       setLoading(false)
     }
 
     getAuth()
   }, [])
+
+  const ProtectedRoute: React.ComponentType<any> = ({
+    component: Component,
+    ...rest
+  }: {
+    component: React.ComponentType<RouteProps>
+  }) => (
+    <Route
+      {...rest}
+      render={(props) => {
+        let u = auth.user
+        return u ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{ pathname: '/login', state: { from: props.location } }}
+          />
+        )
+      }}
+    />
+  )
 
   if (loading) {
     return <IonSpinner className="spinner"></IonSpinner>
@@ -76,23 +91,14 @@ const App: React.FC = () => {
     return (
       <IonApp>
         <IonReactRouter>
-          <IonRouterOutlet>
-            {auth && auth.user ? (
-              <>
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/register" component={Register} />
-                <Route exact path="/tabs" component={Tabs} />
-                <Redirect exact from="/" to="/tabs" />
-              </>
-            ) : (
-              <>
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/register" component={Register} />
-                <Route exact path="/tabs" component={Tabs} />
-                <Redirect exact from="/" to="/login" />
-              </>
-            )}
-          </IonRouterOutlet>
+          <Switch>
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <Redirect exact from="/" to="/tabs" />
+            <IonRouterOutlet>
+              <ProtectedRoute name="tabs" path="/tabs" component={Tabs} />
+            </IonRouterOutlet>
+          </Switch>
         </IonReactRouter>
       </IonApp>
     )
