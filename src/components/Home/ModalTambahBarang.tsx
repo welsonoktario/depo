@@ -18,13 +18,13 @@ import {
 import { close } from 'ionicons/icons'
 import { useAtom, useAtomValue } from 'jotai'
 import React, { useState } from 'react'
-import { authAtom, cartAtom } from '../atoms'
-import { Barang } from '../models'
+import { authAtom, cartAtom } from '../../atoms'
+import { Barang } from '../../models'
 import './ModalTambahBarang.css'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
-const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
+export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
   const auth = useAtomValue(authAtom)
   const [jumlah, setJumlah] = useState(1)
   const [cart, setCart] = useAtom(cartAtom)
@@ -90,8 +90,8 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonButton>
-              <IonIcon onClick={cancel} slot="icon-only" icon={close} />
+            <IonButton onClick={() => cancel()}>
+              <IonIcon slot="icon-only" icon={close} />
             </IonButton>
           </IonButtons>
           <IonTitle>Tambah ke Keranjang</IonTitle>
@@ -127,5 +127,3 @@ const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
     </>
   )
 }
-
-export default ModalTambahBarang

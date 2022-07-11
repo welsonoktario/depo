@@ -1,7 +1,7 @@
-import { User } from "./user"
+import { User } from './user'
 
 export interface Kurir {
   id: number
-  alamat: string,
+  alamat: string
   user: User
 }

@@ -7,7 +7,6 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -19,10 +18,8 @@ import {
 } from '@ionic/react'
 import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
-import { authAtom } from '../../atoms'
-
-import { arrowBack } from 'ionicons/icons'
-import { useIonRouter } from '../../utils'
+import { authAtom } from '../../../atoms'
+import { useIonRouter } from '../../../utils'
 import './Register.css'
 
 export const Register: React.FC = () => {
@@ -57,7 +54,7 @@ export const Register: React.FC = () => {
 
     const { status, msg, data } = await res.data
 
-    if (status == 'OK') {
+    if (status === 'OK') {
       await Storage.clear()
       await Storage.set({ key: 'user', value: JSON.stringify(data.user) })
       await Storage.set({ key: 'token', value: JSON.stringify(data.token) })
@@ -69,10 +66,6 @@ export const Register: React.FC = () => {
     } else {
       alert(msg)
     }
-  }
-
-  const back = (e: any) => {
-    router.goBack()
   }
 
   return (

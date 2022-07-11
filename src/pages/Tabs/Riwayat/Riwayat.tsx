@@ -1,4 +1,5 @@
 import { Http } from '@capacitor-community/http'
+import { IonRefresherCustomEvent } from '@ionic/core'
 import {
   IonContent,
   IonHeader,
@@ -9,18 +10,19 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
+  RefresherEventDetail,
 } from '@ionic/react'
 import { useAtom, useAtomValue } from 'jotai'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { authAtom, transaksisAtom } from '../../../atoms'
-import CardRiwayat from '../../../components/CardRiwayat'
-import ModalDetailTransaksi from '../../../components/ModalDetailTransaksi'
+import { CardRiwayat } from '../../../components/Riwayat/CardRiwayat'
+import { ModalDetailTransaksi } from '../../../components/Riwayat/ModalDetailTransaksi'
 import { Transaksi } from '../../../models'
 import './Riwayat.css'
 
-const Riwayat: React.FC = () => {
+export const Riwayat: React.FC = () => {
   useEffect(() => {
-    loadTransaksis(null)
+    loadTransaksis(undefined)
   }, [])
 
   const auth = useAtomValue(authAtom)
@@ -29,25 +31,30 @@ const Riwayat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const loadTransaksis = async (event: any) => {
-    setLoading(true)
-    const res = await Http.get({
-      url: process.env.REACT_APP_BASE_URL + '/transaksi',
-      headers: {
-        Authorization: `Bearer ${auth.token}`,
-        Accept: 'application/json',
-      },
-    })
+  const loadTransaksis = useCallback(
+    async (
+      event: IonRefresherCustomEvent<RefresherEventDetail> | undefined
+    ) => {
+      setLoading(true)
+      const res = await Http.get({
+        url: process.env.REACT_APP_BASE_URL + '/transaksi',
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          Accept: 'application/json',
+        },
+      })
 
-    const { data } = await res.data
+      const { data } = await res.data
 
-    setTransaksis(data)
+      setTransaksis(data)
 
-    if (event) {
-      event.detail.complete()
-    }
-    setLoading(false)
-  }
+      if (event) {
+        event.detail.complete()
+      }
+      setLoading(false)
+    },
+    [auth, setTransaksis]
+  )
 
   const transaksiCards = transaksis.map((transaksi) => (
     <CardRiwayat
@@ -100,5 +107,3 @@ const Riwayat: React.FC = () => {
     </IonPage>
   )
 }
-
-export default Riwayat

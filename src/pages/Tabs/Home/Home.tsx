@@ -1,8 +1,3 @@
-import './Home.css'
-
-import { useAtom, useAtomValue } from 'jotai'
-import React, { useEffect, useState } from 'react'
-
 import { Http } from '@capacitor-community/http'
 import { Dialog } from '@capacitor/dialog'
 import {
@@ -16,33 +11,28 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-
-import { authAtom, cartAtom, transaksisAtom } from '../../../atoms'
-import CardBarang from '../../../components/CardBarang'
-import { FABCart } from '../../../components/FABCart'
-import { ModalCart } from '../../../components/ModalCart'
-import ModalTambahBarang from '../../../components/ModalTambahBarang'
+import { useAtomValue } from 'jotai'
+import React, { useCallback, useEffect, useState } from 'react'
+import { authAtom } from '../../../atoms'
+import { CardBarang } from '../../../components/Home/CardBarang'
+import { ModalTambahBarang } from '../../../components/Home/ModalTambahBarang'
 import { Barang, Kategori } from '../../../models'
-import { useIonRouter } from '../../../utils'
+import './Home.css'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
-const Home: React.FC = () => {
-  const router = useIonRouter()
+export const Home: React.FC = () => {
   const auth = useAtomValue(authAtom)
-  const [cart, setCart] = useAtom(cartAtom)
-  const [transaksis, setTransaksis] = useAtom(transaksisAtom)
   const [kategoris, setKategoris] = useState<Kategori[]>([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState<Barang>()
-  const [isModalBarangOpen, setIsModalBarangOpen] = useState(false)
-  const [isModalCartOpen, setIsModalCartOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     loadBarangs()
   }, [])
 
-  const loadBarangs = async () => {
+  const loadBarangs = useCallback(async () => {
     setLoading(true)
 
     const res = await Http.get({
@@ -56,8 +46,7 @@ const Home: React.FC = () => {
     const { data, status } = res
 
     if (status !== 500) {
-      setKategoris(data.kategoris)
-      setCart(data.keranjangs)
+      setKategoris(data.data)
     } else {
       await Dialog.alert({
         title: 'Error',
@@ -66,50 +55,11 @@ const Home: React.FC = () => {
     }
 
     setLoading(false)
-  }
+  }, [auth.token])
 
   const openModal = (barang: Barang) => {
     setSelected(barang)
-    setIsModalBarangOpen(true)
-  }
-
-  const closeModal = async () => {
-    setIsModalBarangOpen(false)
-  }
-
-  const checkout = async (isCheckout: boolean) => {
-    setIsModalCartOpen(false)
-
-    if (isCheckout) {
-      const res = await Http.post({
-        url: BASE_URL + '/transaksi',
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        data: {
-          cart,
-        },
-      })
-
-      const { data, status } = res
-
-      console.log(status, data)
-
-      if (status !== 500) {
-        setCart([])
-        const oldTransaksis = transaksis
-        oldTransaksis.unshift(data.data)
-        setTransaksis(oldTransaksis)
-        router.push('/tabs/riwayat', 'root')
-      } else {
-        await Dialog.alert({
-          title: 'Error',
-          message: data.msg,
-        })
-      }
-    }
+    setIsOpen(true)
   }
 
   return (
@@ -148,28 +98,15 @@ const Home: React.FC = () => {
                 ))}
               </div>
             ))}
-            <FABCart onClick={() => setIsModalCartOpen(true)}></FABCart>
           </>
         )}
 
         {selected ? (
-          <IonModal
-            isOpen={isModalBarangOpen}
-            onDidDismiss={() => closeModal()}
-          >
+          <IonModal isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
             <ModalTambahBarang barang={selected} />
           </IonModal>
         ) : null}
-
-        <IonModal
-          isOpen={isModalCartOpen}
-          onDidDismiss={(status) => checkout(status.detail.data)}
-        >
-          <ModalCart></ModalCart>
-        </IonModal>
       </IonContent>
     </IonPage>
   )
 }
-
-export default Home

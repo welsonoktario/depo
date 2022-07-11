@@ -13,12 +13,11 @@ import {
 import { lockClosedOutline, logOutOutline, pinOutline } from 'ionicons/icons'
 import { useSetAtom } from 'jotai'
 import React from 'react'
-import { useHistory } from 'react-router'
 import { authAtom } from '../../../atoms'
 import { useIonRouter } from '../../../utils'
 import './Profil.css'
 
-const Profil: React.FC = () => {
+export const Profil: React.FC = () => {
   const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
 
@@ -64,5 +63,3 @@ const Profil: React.FC = () => {
     </IonPage>
   )
 }
-
-export default Profil

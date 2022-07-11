@@ -8,20 +8,22 @@ import {
   IonTabs,
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { home, person, time } from 'ionicons/icons'
+import { cart, home, person, time } from 'ionicons/icons'
 import React from 'react'
 import { Redirect, Route } from 'react-router'
-import Home from './Home/Home'
-import Profil from './Profil/Profil'
-import Riwayat from './Riwayat/Riwayat'
+import { Home } from './Home/Home'
+import { Keranjang } from './Keranjang/Keranjang'
+import { Profil } from './Profil/Profil'
+import { Riwayat } from './Riwayat/Riwayat'
 
-const Tabs: React.FC = () => {
+export const Tabs: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
             <Route exact path="/tabs/home" component={Home} />
+            <Route exact path="/tabs/keranjang" component={Keranjang} />
             <Route exact path="/tabs/riwayat" component={Riwayat} />
             <Route exact path="/tabs/profil" component={Profil} />
             <Route exact path="/tabs">
@@ -32,6 +34,10 @@ const Tabs: React.FC = () => {
             <IonTabButton tab="/tabs/home" href="/tabs/home">
               <IonIcon icon={home} />
               <IonLabel>Home</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="/tabs/keranjang" href="/tabs/keranjang">
+              <IonIcon icon={cart} />
+              <IonLabel>Keranjang</IonLabel>
             </IonTabButton>
             <IonTabButton tab="/tabs/riwayat" href="/tabs/riwayat">
               <IonIcon icon={time} />
@@ -47,5 +53,3 @@ const Tabs: React.FC = () => {
     </IonApp>
   )
 }
-
-export default Tabs

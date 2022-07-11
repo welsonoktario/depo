@@ -9,11 +9,11 @@ import {
   IonItem,
 } from '@ionic/react'
 
-import { Barang } from '../models'
+import { Barang } from '../../models'
 
 import './CardBarang.css'
 
-const CardBarang: React.FC<{
+export const CardBarang: React.FC<{
   barang: Barang
   onClick(barang: Barang): void
 }> = (props) => {
@@ -44,5 +44,3 @@ const CardBarang: React.FC<{
     </IonCard>
   )
 }
-
-export default CardBarang

@@ -10,7 +10,6 @@ import { useAtom } from 'jotai'
 import React, { useEffect, useState } from 'react'
 import { Redirect, Route, RouteProps, Switch } from 'react-router-dom'
 import { authAtom } from './atoms'
-import Login from './pages/Auth/Login'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -30,9 +29,10 @@ import '@ionic/react/css/text-transformation.css'
 
 /* Theme variables */
 import './App.css'
-import { Register } from './pages/Auth/Register'
+import { Login } from './pages/Auth/Login/Login'
+import { Register } from './pages/Auth/Register/Register'
+import { Tabs } from './pages/Tabs/Tabs'
 import './theme/variables.css'
-import Tabs from './pages/Tabs/Tabs'
 
 setupIonicReact()
 

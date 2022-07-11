@@ -1,10 +1,10 @@
 export interface Depo {
   id: number
-  nama: string,
-  alamat: string,
-  tipeCabang: string,
+  nama: string
+  alamat: string
+  tipeCabang: string
   lokasi: {
-    lat: number,
+    lat: number
     long: number
   }
 }

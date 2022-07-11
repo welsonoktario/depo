@@ -13,8 +13,7 @@ import {
 import { add } from 'ionicons/icons'
 import { FC } from 'react'
 
-const Alamat: FC = () => {
-
+export const Alamat: FC = () => {
   return (
     <IonApp>
       <IonHeader>
@@ -38,12 +37,8 @@ const Alamat: FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <IonList inset>
-          
-        </IonList>
+        <IonList inset></IonList>
       </IonContent>
     </IonApp>
   )
 }
-
-export default Alamat
