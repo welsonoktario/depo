@@ -6,20 +6,23 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonModal,
   IonPage,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
 import { lockClosedOutline, logOutOutline, pinOutline } from 'ionicons/icons'
 import { useSetAtom } from 'jotai'
-import React from 'react'
+import React, { useState } from 'react'
 import { authAtom } from '../../../atoms'
+import { ModalAlamat } from '../../../components/Profil/ModalAlamat'
 import { useIonRouter } from '../../../utils'
 import './Profil.css'
 
 export const Profil: React.FC = () => {
   const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
+  const [isModalAlamatOpen, setIsModalAlamatOpen] = useState(false)
 
   const logout = async () => {
     await Storage.clear()
@@ -46,7 +49,7 @@ export const Profil: React.FC = () => {
         </IonHeader>
 
         <IonList inset>
-          <IonItem button detail>
+          <IonItem button detail onClick={() => setIsModalAlamatOpen(true)}>
             <IonIcon icon={pinOutline} slot="start"></IonIcon>
             <IonLabel>Alamat</IonLabel>
           </IonItem>
@@ -59,6 +62,13 @@ export const Profil: React.FC = () => {
             <IonLabel color="danger">Keluar</IonLabel>
           </IonItem>
         </IonList>
+
+        <IonModal
+          isOpen={isModalAlamatOpen}
+          onDidDismiss={() => setIsModalAlamatOpen(false)}
+        >
+          <ModalAlamat />
+        </IonModal>
       </IonContent>
     </IonPage>
   )

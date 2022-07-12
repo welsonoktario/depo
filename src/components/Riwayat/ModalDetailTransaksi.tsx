@@ -85,12 +85,8 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonButton>
-              <IonIcon
-                onClick={close}
-                slot="icon-only"
-                icon={closeIcon}
-              ></IonIcon>
+            <IonButton onClick={close}>
+              <IonIcon slot="icon-only" icon={closeIcon}></IonIcon>
             </IonButton>
           </IonButtons>
           <IonTitle>Detail Transaksi</IonTitle>

@@ -1,5 +1,6 @@
 import { Http } from '@capacitor-community/http'
 import { Dialog } from '@capacitor/dialog'
+import { IonModalCustomEvent, OverlayEventDetail } from '@ionic/core'
 import {
   IonButton,
   IonContent,
@@ -9,6 +10,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonModal,
   IonNote,
   IonPage,
   IonSpinner,
@@ -17,9 +19,11 @@ import {
 } from '@ionic/react'
 import { cash, pin } from 'ionicons/icons'
 import { useAtom, useAtomValue } from 'jotai'
+import { LngLat } from 'mapbox-gl'
 import React, { useCallback, useEffect, useState } from 'react'
 import { authAtom, cartAtom, transaksisAtom } from '../../../atoms'
 import { CardKeranjang } from '../../../components/Keranjang/CardKeranjang'
+import { ModalPilihAlamat } from '../../../components/Keranjang/ModalPilihAlamat'
 import { CartItem } from '../../../models'
 import { useIonRouter } from '../../../utils'
 import './Keranjang.css'
@@ -32,6 +36,11 @@ export const Keranjang: React.FC = () => {
   const [cart, setCart] = useAtom(cartAtom)
   const [transaksis, setTransaksis] = useAtom(transaksisAtom)
   const [loading, setLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [lokasi, setLokasi] = useState<{
+    alamat: string
+    lokasi: { lat: number; lng: number }
+  }>()
 
   useEffect(() => {
     loadKeranjang()
@@ -72,6 +81,7 @@ export const Keranjang: React.FC = () => {
       },
       data: {
         cart,
+        lokasi: lokasi?.lokasi,
       },
     })
 
@@ -133,6 +143,22 @@ export const Keranjang: React.FC = () => {
     setCart(oldCart)
   }
 
+  const closeModal = (
+    e: IonModalCustomEvent<
+      OverlayEventDetail<{
+        lokasi: LngLat
+        alamat: string
+      }>
+    >
+  ) => {
+    setIsOpen(false)
+    const data = e.detail.data
+
+    if (data) {
+      setLokasi(data)
+    }
+  }
+
   const total =
     'Rp ' +
     cart
@@ -174,30 +200,36 @@ export const Keranjang: React.FC = () => {
         <>
           {cart.length ? (
             <IonFooter className="ion-padding">
-              <IonItem lines="none">
+              <IonItem
+                onClick={() => setIsOpen(true)}
+                lines="none"
+                className="ion-margin-bottom"
+                button
+                detail
+              >
+                <IonIcon slot="start" icon={pin}></IonIcon>
+                <IonLabel>
+                  {lokasi?.alamat ? lokasi.alamat : 'Alamat Kirim'}
+                </IonLabel>
+              </IonItem>
+              <IonItem lines="full">
                 <IonIcon slot="start" icon={cash}></IonIcon>
                 <IonLabel>Total</IonLabel>
                 <IonNote slot="end" color="primary">
                   {total}
                 </IonNote>
               </IonItem>
-              <IonItem
-                onClick={() => console.log('helo')}
-                className="ion-margin-bottom"
-                lines="full"
-                button
-                detail
-              >
-                <IonIcon slot="start" icon={pin}></IonIcon>
-                <IonLabel>Alamat Kirim</IonLabel>
-              </IonItem>
-              <IonButton expand="block" onClick={checkout}>
+              <IonButton disabled={!lokasi} expand="block" onClick={checkout}>
                 Checkout
               </IonButton>
             </IonFooter>
           ) : null}
         </>
       ) : null}
+
+      <IonModal isOpen={isOpen} onDidDismiss={closeModal}>
+        <ModalPilihAlamat />
+      </IonModal>
     </IonPage>
   )
 }
