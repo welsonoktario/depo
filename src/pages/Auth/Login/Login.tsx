@@ -17,7 +17,6 @@ import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 import { authAtom, cartAtom } from '../../../atoms'
 import { useIonRouter } from '../../../utils'
-import './Login.css'
 
 export const Login: React.FC = () => {
   const router = useIonRouter()

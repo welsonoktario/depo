@@ -3,9 +3,12 @@ import { checkmarkCircle } from 'ionicons/icons'
 import { FC } from 'react'
 import { Alamat } from '../../../models'
 
-export const CardAlamat: FC<{ alamat: Alamat }> = ({ alamat }) => {
+export const CardAlamat: FC<{
+  alamat: Alamat
+  onClick: (alamat: Alamat) => void
+}> = ({ alamat, onClick }) => {
   return (
-    <IonItem button lines="none">
+    <IonItem button lines="none" onClick={() => onClick(alamat)}>
       <IonLabel>
         <h3>{alamat.nama}</h3>
         <p>{alamat.alamat}</p>

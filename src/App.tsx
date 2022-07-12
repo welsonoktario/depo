@@ -6,10 +6,10 @@ import {
   setupIonicReact,
 } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import React, { useEffect, useState } from 'react'
 import { Redirect, Route, RouteProps, Switch } from 'react-router-dom'
-import { authAtom } from './atoms'
+import { alamatAtom, authAtom } from './atoms'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -28,6 +28,8 @@ import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
 
 /* Theme variables */
+import { Http } from '@capacitor-community/http'
+import { Dialog } from '@capacitor/dialog'
 import './App.css'
 import { Login } from './pages/Auth/Login/Login'
 import { Register } from './pages/Auth/Register/Register'
@@ -36,9 +38,12 @@ import './theme/variables.css'
 
 setupIonicReact()
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [auth, setAuth] = useAtom(authAtom)
+  const setAlamats = useSetAtom(alamatAtom)
 
   useEffect(() => {
     const getAuth = async () => {
@@ -56,6 +61,25 @@ const App: React.FC = () => {
           user: JSON.parse(userJson.value),
           token: tokenString.value,
         })
+
+        const res = await Http.get({
+          url: BASE_URL + '/alamat',
+          headers: {
+            Authorization: `Bearer ${tokenString.value}`,
+            Accept: 'application/json',
+          },
+        })
+
+        const { data, status } = res
+
+        if (status !== 500) {
+          setAlamats(data.data)
+        } else {
+          await Dialog.alert({
+            title: 'Error',
+            message: 'Terjadi kesalahan sistem, silahkan coba lagi nanti',
+          })
+        }
       }
 
       setLoading(false)

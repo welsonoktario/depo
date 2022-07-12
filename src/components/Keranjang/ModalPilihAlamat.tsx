@@ -7,6 +7,7 @@ import {
   IonFooter,
   IonHeader,
   IonIcon,
+  IonModal,
   IonText,
   IonTitle,
   IonToolbar,
@@ -31,7 +32,7 @@ export const ModalPilihAlamat: FC = () => {
   const [alamat, setAlamat] = useState('')
 
   useEffect(() => {
-    if (map.current) return // initialize map only once
+    if (map.current) return
     map.current = new Map({
       accessToken: ACCESS_TOKEN,
       container: mapContainer.current as HTMLElement,
