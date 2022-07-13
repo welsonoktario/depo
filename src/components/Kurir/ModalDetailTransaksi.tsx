@@ -14,6 +14,7 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonModal,
   IonNote,
   IonText,
   IonTitle,
@@ -21,16 +22,17 @@ import {
 } from '@ionic/react'
 import {
   calendarOutline,
-  carOutline,
   close as closeIcon,
   homeOutline,
+  pinOutline,
   qrCodeOutline,
   timeOutline,
 } from 'ionicons/icons'
 import { useAtomValue } from 'jotai'
-import React from 'react'
+import React, { useState } from 'react'
 import { authAtom } from '../../atoms'
 import { Transaksi } from '../../models'
+import { ModalPengiriman } from './ModalPengiriman'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -39,6 +41,8 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
 ) => {
   const auth = useAtomValue(authAtom)
   const transaksi = props.transaksi
+  const [isOpen, setIsOpen] = useState(false)
+
   const tanggal = new Date(transaksi.tanggal).toLocaleString('id-ID', {
     weekday: 'long',
     year: 'numeric',
@@ -160,13 +164,12 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
               <IonLabel>Depo</IonLabel>
               <IonLabel slot="end">{transaksi.depo?.nama}</IonLabel>
             </IonItem>
-            <IonItem>
+            <IonItem button detail onClick={() => setIsOpen(true)}>
               <IonIcon
-                icon={carOutline}
+                icon={pinOutline}
                 style={{ paddingRight: '8px' }}
               ></IonIcon>
-              <IonLabel>Kurir</IonLabel>
-              <IonLabel slot="end">{transaksi.kurir?.user.nama}</IonLabel>
+              <IonLabel>Lokasi Pengiriman</IonLabel>
             </IonItem>
             <IonItem lines="none">
               <IonIcon
@@ -190,6 +193,10 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
             {details}
           </IonItemGroup>
         </IonList>
+
+        <IonModal isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
+          <ModalPengiriman lokasi={transaksi.lokasiPengiriman} />
+        </IonModal>
       </IonContent>
 
       <IonFooter className="ion-padding">

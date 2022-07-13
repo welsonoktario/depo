@@ -1,3 +1,4 @@
+import { Dialog } from '@capacitor/dialog'
 import { modalController } from '@ionic/core'
 import {
   IonBadge,
@@ -80,6 +81,15 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
     await modalController.dismiss()
   }
 
+  const showPembayaran = async () => {
+    await Dialog.alert({
+      title: 'Pembayaran',
+      message: `Transfer sebesar Rp ${total.toLocaleString(
+        'id-ID'
+      )} transaksi ke rekening BCA Amadis dengan nomor rekening 7807807880`,
+    })
+  }
+
   return (
     <>
       <IonHeader>
@@ -158,12 +168,18 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
       </IonContent>
 
       <IonFooter className="ion-padding">
-        <IonItem lines="none">
+        <IonItem lines="none" className="ion-margin-bottom">
           <IonLabel>Total</IonLabel>
           <IonNote slot="end" color="primary">
             Rp {total.toLocaleString('id-ID')}
           </IonNote>
         </IonItem>
+
+        {transaksi.status === 'Menunggu Pembayaran' ? (
+          <IonButton onClick={showPembayaran} expand="block" fill="clear">
+            Petunjuk Pembayaran
+          </IonButton>
+        ) : null}
       </IonFooter>
     </>
   )
