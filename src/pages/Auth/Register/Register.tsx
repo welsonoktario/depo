@@ -1,4 +1,5 @@
 import { Http } from '@capacitor-community/http'
+import { Dialog } from '@capacitor/dialog'
 import { Storage } from '@capacitor/storage'
 import {
   IonBackButton,
@@ -41,8 +42,7 @@ export const Register: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const register = async (e: any) => {
-    e.preventDefault()
+  const register = async () => {
     const res = await Http.post({
       url: process.env.REACT_APP_BASE_URL + '/auth/register',
       data: form,
@@ -64,7 +64,10 @@ export const Register: React.FC = () => {
       })
       router.push('/tabs', 'forward', 'replace')
     } else {
-      alert(msg)
+      await Dialog.alert({
+        title: 'Error',
+        message: msg,
+      })
     }
   }
 
@@ -92,7 +95,7 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem className="pl">
+            <IonItem className="pl" lines="inset">
               <IonLabel position="floating">Telepon</IonLabel>
               <IonInput
                 name="telepon"
@@ -102,7 +105,7 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem className="pl">
+            <IonItem className="pl" lines="inset">
               <IonLabel position="floating">Email</IonLabel>
               <IonInput
                 name="email"
@@ -112,7 +115,7 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem className="pl">
+            <IonItem className="pl" lines="inset">
               <IonLabel position="floating">Password</IonLabel>
               <IonInput
                 name="password"
@@ -136,7 +139,7 @@ export const Register: React.FC = () => {
       </IonContent>
 
       <IonFooter className="ion-padding">
-        <IonButton type="submit" expand="block">
+        <IonButton onClick={() => register()} expand="block">
           Register
         </IonButton>
       </IonFooter>
