@@ -57,7 +57,7 @@ export const Register: React.FC = () => {
     if (status === 'OK') {
       await Storage.clear()
       await Storage.set({ key: 'user', value: JSON.stringify(data.user) })
-      await Storage.set({ key: 'token', value: JSON.stringify(data.token) })
+      await Storage.set({ key: 'token', value: data.token })
       setAuth({
         user: data.user,
         token: data.token,
