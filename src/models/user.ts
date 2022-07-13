@@ -1,7 +1,8 @@
 export interface User {
   id: number
-  email: string
   nama: string
+  telepon: string
+  email: string
   role: string
   customer: any
 }

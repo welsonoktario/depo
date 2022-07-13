@@ -20,11 +20,12 @@ import {
 import { cash, pin } from 'ionicons/icons'
 import { useAtom, useAtomValue } from 'jotai'
 import { LngLat } from 'mapbox-gl'
-import React, { useCallback, useEffect, useState } from 'react'
-import { authAtom, cartAtom, transaksisAtom } from '../../../atoms'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { alamatAtom, authAtom, cartAtom, transaksisAtom } from '../../../atoms'
 import { CardKeranjang } from '../../../components/Keranjang/CardKeranjang'
 import { ModalPilihAlamat } from '../../../components/Keranjang/ModalPilihAlamat'
-import { CartItem } from '../../../models'
+import { ModalPilihLokasi } from '../../../components/Keranjang/ModalPilihLokasi'
+import { Alamat, CartItem } from '../../../models'
 import { useIonRouter } from '../../../utils'
 import './Keranjang.css'
 
@@ -33,13 +34,16 @@ const BASE_URL = process.env.REACT_APP_BASE_URL
 export const Keranjang: React.FC = () => {
   const router = useIonRouter()
   const auth = useAtomValue(authAtom)
+  const alamats = useAtomValue(alamatAtom)
+  const modalAlamat = useRef<HTMLIonModalElement>(null)
   const [cart, setCart] = useAtom(cartAtom)
   const [transaksis, setTransaksis] = useAtom(transaksisAtom)
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [isModalAlamatOpen, setIsModalAlamatOpen] = useState(false)
   const [lokasi, setLokasi] = useState<{
-    alamat: string
-    lokasi: { lat: number; lng: number }
+    alamat: string | undefined
+    lokasi: { lat: number; lng: number } | undefined
   }>()
 
   useEffect(() => {
@@ -68,6 +72,12 @@ export const Keranjang: React.FC = () => {
       })
     }
 
+    const l = alamats.find((alamat) => alamat.isUtama)
+
+    setLokasi({
+      alamat: l?.alamat,
+      lokasi: l?.lokasi,
+    })
     setLoading(false)
   }, [auth, setCart])
 
@@ -159,6 +169,24 @@ export const Keranjang: React.FC = () => {
     }
   }
 
+  const closeModalAlamat = (
+    e: IonModalCustomEvent<OverlayEventDetail<Alamat | 'pilih' | undefined>>
+  ) => {
+    setIsModalAlamatOpen(false)
+
+    const data = e.detail.data
+    if (data) {
+      if (data === 'pilih') {
+        setIsOpen(true)
+      } else {
+        setLokasi({
+          alamat: data.alamat,
+          lokasi: data.lokasi,
+        })
+      }
+    }
+  }
+
   const total =
     'Rp ' +
     cart
@@ -201,7 +229,7 @@ export const Keranjang: React.FC = () => {
           {cart.length ? (
             <IonFooter className="ion-padding">
               <IonItem
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsModalAlamatOpen(true)}
                 lines="none"
                 className="ion-margin-bottom"
                 button
@@ -228,6 +256,16 @@ export const Keranjang: React.FC = () => {
       ) : null}
 
       <IonModal isOpen={isOpen} onDidDismiss={closeModal}>
+        <ModalPilihLokasi />
+      </IonModal>
+
+      <IonModal
+        ref={modalAlamat}
+        isOpen={isModalAlamatOpen}
+        initialBreakpoint={0.5}
+        breakpoints={[0, 0.5, 0.75]}
+        onDidDismiss={closeModalAlamat}
+      >
         <ModalPilihAlamat />
       </IonModal>
     </IonPage>

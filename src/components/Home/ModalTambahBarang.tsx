@@ -26,7 +26,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL
 
 export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
   const auth = useAtomValue(authAtom)
-  const [jumlah, setJumlah] = useState(1)
+  const [jumlah, setJumlah] = useState(props.barang.minPembelian)
   const [cart, setCart] = useAtom(cartAtom)
 
   const addToCart = async (barang: Barang) => {
@@ -100,17 +100,29 @@ export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
 
       <IonContent>
         <IonList inset>
-          <IonItem className="jumlah">
-            <IonLabel position="floating">Jumlah</IonLabel>
+          <IonItem className="pl" lines="inset">
+            <IonLabel>
+              <h2>{props.barang.nama}</h2>
+              <p>{props.barang.deskripsi}</p>
+              <p>
+                Rp {props.barang.harga.toLocaleString('id-ID')} /{' '}
+                {props.barang.satuan}
+              </p>
+            </IonLabel>
+          </IonItem>
+          <IonItem className="jumlah" lines="inset">
+            <IonLabel position="floating">
+              Jumlah (Min. Pembelian: {props.barang.minPembelian})
+            </IonLabel>
             <IonInput
               type="number"
               placeholder="1"
               value={jumlah}
-              min={1}
+              min={props.barang.minPembelian}
               onIonChange={(e) => setJumlah(e.target.value as number)}
             ></IonInput>
           </IonItem>
-          <IonItem className="subtotal">
+          <IonItem className="subtotal" lines="none">
             <IonText>
               Subtotal:{' '}
               {'Rp ' + (props.barang.harga * jumlah).toLocaleString('id-ID')}

@@ -11,17 +11,26 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
-import { lockClosedOutline, logOutOutline, pinOutline } from 'ionicons/icons'
+import {
+  lockClosedOutline,
+  logOutOutline,
+  personOutline,
+  pinOutline,
+} from 'ionicons/icons'
 import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 import { authAtom } from '../../../atoms'
 import { ModalAlamat } from '../../../components/Profil/ModalAlamat'
+import { ModalUbahPassword } from '../../../components/Profil/ModalUbahPassword'
+import { ModalUbahProfil } from '../../../components/Profil/ModalUbahProfil'
 import { useIonRouter } from '../../../utils'
 import './Profil.css'
 
 export const Profil: React.FC = () => {
   const router = useIonRouter()
   const setAuth = useSetAtom(authAtom)
+  const [isModalProfilOpen, setIsModalProfilOpen] = useState(false)
+  const [isModalPasswordOpen, setIsModalPasswordOpen] = useState(false)
   const [isModalAlamatOpen, setIsModalAlamatOpen] = useState(false)
 
   const logout = async () => {
@@ -53,7 +62,11 @@ export const Profil: React.FC = () => {
             <IonIcon icon={pinOutline} slot="start"></IonIcon>
             <IonLabel>Alamat</IonLabel>
           </IonItem>
-          <IonItem button detail>
+          <IonItem button detail onClick={() => setIsModalProfilOpen(true)}>
+            <IonIcon icon={personOutline} slot="start"></IonIcon>
+            <IonLabel>Ubah Profil</IonLabel>
+          </IonItem>
+          <IonItem button detail onClick={() => setIsModalPasswordOpen(true)}>
             <IonIcon icon={lockClosedOutline} slot="start"></IonIcon>
             <IonLabel>Ubah Password</IonLabel>
           </IonItem>
@@ -68,6 +81,20 @@ export const Profil: React.FC = () => {
           onDidDismiss={() => setIsModalAlamatOpen(false)}
         >
           <ModalAlamat />
+        </IonModal>
+
+        <IonModal
+          isOpen={isModalProfilOpen}
+          onDidDismiss={() => setIsModalProfilOpen(false)}
+        >
+          <ModalUbahProfil />
+        </IonModal>
+
+        <IonModal
+          isOpen={isModalPasswordOpen}
+          onDidDismiss={() => setIsModalPasswordOpen(false)}
+        >
+          <ModalUbahPassword />
         </IonModal>
       </IonContent>
     </IonPage>

@@ -1,164 +1,40 @@
-import { Http } from '@capacitor-community/http'
 import { modalController } from '@ionic/core'
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonFooter,
-  IonHeader,
-  IonIcon,
-  IonModal,
-  IonText,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/react'
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
-import { close } from 'ionicons/icons'
-import { GeolocateControl, LngLat, Map, MapMouseEvent, Marker } from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { FC, useEffect, useRef, useState } from 'react'
-import './ModalPilihAlamat.css'
-
-const ACCESS_TOKEN =
-  'pk.eyJ1Ijoid2Vsc29ub2t0YXJpbyIsImEiOiJja3liam9zNW0wZnppMnVvZGdwaW1tZDltIn0.VZSKrmUqnhui_Z4XQYrvYg'
+import { IonContent, IonItem, IonLabel, IonList } from '@ionic/react'
+import { useAtomValue } from 'jotai'
+import { FC } from 'react'
+import { alamatAtom } from '../../atoms'
+import { Alamat } from '../../models'
 
 export const ModalPilihAlamat: FC = () => {
-  const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<Map | null>(null)
-  const geocoder = useRef<MapboxGeocoder | null>(null)
-  const geolocate = useRef<GeolocateControl | null>()
-  const marker = useRef<Marker | null>(null)
-  const [alamat, setAlamat] = useState('')
+  const alamats = useAtomValue(alamatAtom)
 
-  useEffect(() => {
-    if (map.current) return
-    map.current = new Map({
-      accessToken: ACCESS_TOKEN,
-      container: mapContainer.current as HTMLElement,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [112.7126837, -7.2756195],
-      zoom: 13,
-    })
-
-    geocoder.current = new MapboxGeocoder({
-      accessToken: ACCESS_TOKEN,
-      marker: false,
-      countries: 'id',
-      language: 'ID',
-      placeholder: 'Cari alamat',
-    })
-
-    geolocate.current = new GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      // When active the map will receive updates to the device's location as it changes.
-      trackUserLocation: true,
-      // Draw an arrow next to the location dot to indicate which direction the device is heading.
-      showUserHeading: true,
-    })
-
-    map.current.addControl(geocoder.current, 'top-left')
-    map.current.addControl(geolocate.current, 'bottom-right')
-
-    map.current.on('load', () => {
-      map.current?.resize()
-      geolocate.current?.trigger()
-    })
-    map.current.on('click', getClickLocation)
-    geocoder.current.on('result', getGeocoderLocation)
-  })
-
-  const getClickLocation = async (e: MapMouseEvent) => {
-    const lngLat = e.lngLat
-
-    if (marker.current) {
-      marker.current.setLngLat(lngLat)
-    } else {
-      marker.current = new Marker().setLngLat(lngLat).addTo(map.current as Map)
-    }
-
-    map.current?.flyTo({
-      center: marker.current.getLngLat(),
-      essential: true,
-      zoom: 16,
-    })
-
-    await reverseGeocode(lngLat)
-  }
-
-  const getGeocoderLocation = async (e: any) => {
-    const lngLat = e.result.center as LngLat
-
-    if (marker.current) {
-      marker.current.setLngLat(lngLat)
-    } else {
-      marker.current = new Marker().setLngLat(lngLat).addTo(map.current as Map)
-    }
-
-    await reverseGeocode(lngLat)
-  }
-
-  const reverseGeocode = async (lngLat: LngLat) => {
-    const latLng = lngLat.toArray().join(',')
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${latLng}.json?access_token=${ACCESS_TOKEN}&types=postcode,district,address,poi`
-    const res = await Http.get({
-      url,
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-    const { data } = res
-    const json = JSON.parse(data)
-
-    if (json.features.length) {
-      setAlamat(json.features[0].place_name)
-    }
-  }
-
-  const cancel = async () => {
-    await modalController.dismiss(undefined)
-  }
-
-  const pilih = async () => {
-    if (marker.current && alamat) {
-      await modalController.dismiss({
-        lokasi: marker.current.getLngLat(),
-        alamat,
-      })
-    }
+  const pilihAlamat = async (data: Alamat | 'pilih') => {
+    await modalController.dismiss(data)
   }
 
   return (
-    <>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonButtons slot="start">
-            <IonButton onClick={() => cancel()}>
-              <IonIcon slot="icon-only" icon={close} />
-            </IonButton>
-          </IonButtons>
-          <IonTitle>Alamat Kirim</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent>
-        <div className="map-container">
-          <div ref={mapContainer} className="map" />
-        </div>
-      </IonContent>
-
-      <IonFooter className="ion-padding">
-        {alamat ? (
-          <IonText>
-            <p>{alamat}</p>
-          </IonText>
-        ) : null}
-        <IonButton expand="block" onClick={() => pilih()}>
-          Pilih
-        </IonButton>
-      </IonFooter>
-    </>
+    <IonContent className="ion-padding">
+      <IonList>
+        <IonItem
+          onClick={() => pilihAlamat('pilih')}
+          lines="full"
+          detail
+          button
+        >
+          <IonLabel>Pilih dari map</IonLabel>
+        </IonItem>
+        {alamats.map((alamat) => (
+          <IonItem
+            onClick={() => pilihAlamat(alamat)}
+            lines="full"
+            key={`alamat-${alamat.id}`}
+            button
+            detail
+          >
+            <IonLabel>{alamat.nama}</IonLabel>
+          </IonItem>
+        ))}
+      </IonList>
+    </IonContent>
   )
 }

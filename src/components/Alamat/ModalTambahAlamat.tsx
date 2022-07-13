@@ -26,7 +26,7 @@ import { useAtomValue } from 'jotai'
 import { LngLat } from 'mapbox-gl'
 import { FC, useState } from 'react'
 import { authAtom } from '../../atoms'
-import { ModalPilihAlamat } from '../Keranjang/ModalPilihAlamat'
+import { ModalPilihLokasi } from '../Keranjang/ModalPilihLokasi'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -134,7 +134,7 @@ export const ModalTambahAlamat: FC = () => {
         </IonList>
 
         <IonModal isOpen={isOpen} onDidDismiss={closeModal}>
-          <ModalPilihAlamat />
+          <ModalPilihLokasi />
         </IonModal>
       </IonContent>
 

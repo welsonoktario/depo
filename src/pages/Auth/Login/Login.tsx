@@ -1,4 +1,5 @@
 import { Http } from '@capacitor-community/http'
+import { Dialog } from '@capacitor/dialog'
 import { Storage } from '@capacitor/storage'
 import {
   IonButton,
@@ -31,8 +32,6 @@ export const Login: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  // const register = (e: any) => router.push('/register', 'forward', 'push')
-
   const login = async (e: any) => {
     e.preventDefault()
     const res = await Http.post({
@@ -50,11 +49,12 @@ export const Login: React.FC = () => {
 
     if (status === 'OK') {
       await Storage.clear()
-      const cart = data.user.customer.barangs
 
-      setCart(cart)
-
-      delete data.user.customer.barangs
+      if (data.user.customer) {
+        const cart = data.user.customer.barangs
+        setCart(cart)
+        delete data.user.customer.barangs
+      }
 
       await Storage.set({ key: 'user', value: JSON.stringify(data) })
       await Storage.set({ key: 'token', value: data.token })
@@ -62,9 +62,17 @@ export const Login: React.FC = () => {
         user: data.user,
         token: data.token,
       })
-      router.push('/tabs')
+
+      if (data.user.role === 'Customer') {
+        router.push('/tabs')
+      } else if (data.user.role === 'Kurir') {
+        router.push('/kurir')
+      }
     } else {
-      alert(msg)
+      await Dialog.alert({
+        title: 'Error',
+        message: msg,
+      })
     }
   }
 

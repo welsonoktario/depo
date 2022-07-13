@@ -13,7 +13,6 @@ import {
   IonLabel,
   IonList,
   IonPage,
-  IonTextarea,
   IonTitle,
   IonToolbar,
 } from '@ionic/react'
@@ -21,7 +20,6 @@ import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 import { authAtom } from '../../../atoms'
 import { useIonRouter } from '../../../utils'
-import './Register.css'
 
 export const Register: React.FC = () => {
   const router = useIonRouter()
@@ -31,11 +29,6 @@ export const Register: React.FC = () => {
     telepon: '',
     email: '',
     password: '',
-    alamat: '',
-    lokasi: {
-      lat: 0.0,
-      long: 0.0,
-    },
   })
 
   const handleChange = (e: any) => {
@@ -115,7 +108,7 @@ export const Register: React.FC = () => {
                 onIonChange={handleChange}
               ></IonInput>
             </IonItem>
-            <IonItem className="pl" lines="inset">
+            <IonItem className="pl" lines="none">
               <IonLabel position="floating">Password</IonLabel>
               <IonInput
                 name="password"
@@ -124,15 +117,6 @@ export const Register: React.FC = () => {
                 value={form.password}
                 onIonChange={handleChange}
               ></IonInput>
-            </IonItem>
-            <IonItem className="pl" lines="none">
-              <IonLabel position="floating">Alamat</IonLabel>
-              <IonTextarea
-                name="alamat"
-                placeholder="Alamat"
-                value={form.alamat}
-                onIonChange={handleChange}
-              ></IonTextarea>
             </IonItem>
           </IonList>
         </form>

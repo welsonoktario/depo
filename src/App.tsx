@@ -33,6 +33,7 @@ import { Dialog } from '@capacitor/dialog'
 import './App.css'
 import { Login } from './pages/Auth/Login/Login'
 import { Register } from './pages/Auth/Register/Register'
+import { Kurir } from './pages/Kurir/Kurir'
 import { Tabs } from './pages/Tabs/Tabs'
 import './theme/variables.css'
 
@@ -121,6 +122,7 @@ const App: React.FC = () => {
             <Redirect exact from="/" to="/tabs" />
             <IonRouterOutlet>
               <ProtectedRoute name="tabs" path="/tabs" component={Tabs} />
+              <ProtectedRoute name="kurir" path="/kurir" component={Kurir} />
             </IonRouterOutlet>
           </Switch>
         </IonReactRouter>
