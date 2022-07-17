@@ -49,7 +49,11 @@ export const CardKeranjang: React.FC<{
               fill="clear"
               shape="round"
               className="ion-no-padding"
-              onClick={() => onEditClick(cartItem.barang.id, 'dec')}
+              onClick={() => {
+                if (cartItem.jumlah > cartItem.barang.minPembelian) {
+                  onEditClick(cartItem.barang.id, 'dec')
+                }
+              }}
             >
               <IonIcon slot="icon-only" icon={remove}></IonIcon>
             </IonButton>

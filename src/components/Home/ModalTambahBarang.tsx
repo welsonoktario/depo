@@ -100,7 +100,7 @@ export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
 
       <IonContent>
         <IonList inset>
-          <IonItem className="pl" lines="inset">
+          <IonItem lines="inset">
             <IonLabel>
               <h2>{props.barang.nama}</h2>
               <p>{props.barang.deskripsi}</p>
@@ -116,10 +116,19 @@ export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
             </IonLabel>
             <IonInput
               type="number"
-              placeholder="1"
+              placeholder={props.barang.minPembelian.toString()}
               value={jumlah}
               min={props.barang.minPembelian}
-              onIonChange={(e) => setJumlah(e.target.value as number)}
+              onIonChange={(e) => {
+                if (e.target.value) {
+                  if ((e.target.value as number) < props.barang.minPembelian) {
+                    e.target.value = props.barang.minPembelian
+                    setJumlah(props.barang.minPembelian)
+                  } else {
+                    setJumlah(e.target.value as number)
+                  }
+                }
+              }}
             ></IonInput>
           </IonItem>
           <IonItem className="subtotal" lines="none">

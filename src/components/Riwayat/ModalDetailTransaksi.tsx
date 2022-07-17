@@ -1,3 +1,4 @@
+import { Camera, CameraResultType } from '@capacitor/camera'
 import { Dialog } from '@capacitor/dialog'
 import { modalController } from '@ionic/core'
 import {
@@ -8,6 +9,7 @@ import {
   IonFooter,
   IonHeader,
   IonIcon,
+  IonImg,
   IonItem,
   IonItemGroup,
   IonLabel,
@@ -26,13 +28,15 @@ import {
   qrCodeOutline,
   timeOutline,
 } from 'ionicons/icons'
-import React from 'react'
+import React, { useState } from 'react'
 import { Transaksi } from '../../models'
 
 export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   props
 ) => {
   const transaksi = props.transaksi
+  const [bukti, setBukti] = useState('')
+
   const tanggal = new Date(transaksi.tanggal).toLocaleString('id-ID', {
     weekday: 'long',
     year: 'numeric',
@@ -86,8 +90,21 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
       title: 'Pembayaran',
       message: `Transfer sebesar Rp ${total.toLocaleString(
         'id-ID'
-      )} transaksi ke rekening BCA Amadis dengan nomor rekening 7807807880`,
+      )} transaksi ke rekening BCA Amadis dengan nomor rekening 7807807880.\nSetelah transfer, mohon cantumkan gambar/foto bukti pembayran`,
     })
+  }
+
+  const takePicture = async () => {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Uri,
+    })
+
+    if (image.webPath) {
+      setBukti(image.webPath)
+      console.log(image.path)
+    }
   }
 
   return (
@@ -104,7 +121,7 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
       </IonHeader>
 
       <IonContent>
-        <IonList inset>
+        <IonList className="ion-margin-bottom" inset>
           <IonItemGroup>
             <IonListHeader>
               <IonText>
@@ -165,6 +182,14 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
             {details}
           </IonItemGroup>
         </IonList>
+        {bukti ? (
+          <IonImg>
+            <img src={bukti} alt="Bukti pembayaran" />
+          </IonImg>
+        ) : null}
+        <IonButton onClick={takePicture} expand="block">
+          Tambah Bukti Pembayaran
+        </IonButton>
       </IonContent>
 
       <IonFooter className="ion-padding">
