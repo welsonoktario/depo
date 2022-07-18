@@ -34,7 +34,7 @@ import { authAtom } from '../../atoms'
 import { Transaksi } from '../../models'
 import { ModalPengiriman } from './ModalPengiriman'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const API_URL = process.env.REACT_APP_API_URL
 
 export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   props
@@ -91,11 +91,11 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
     await modalController.dismiss()
   }
 
-  const selesai = async () => {
+  const dikirim = async () => {
     const res = await Http.patch({
-      url: BASE_URL + '/transaksi/' + transaksi.id,
+      url: API_URL + '/transaksi/' + transaksi.id,
       data: {
-        status: 'Selesai',
+        status: 'Dikirim',
       },
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -109,7 +109,7 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
     if (status !== 500) {
       await modalController.dismiss({
         id: transaksi.id,
-        status: 'Selesai',
+        status: 'Dikirim',
       })
     } else {
       await Dialog.alert({
@@ -207,9 +207,11 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
           </IonNote>
         </IonItem>
 
-        <IonButton onClick={selesai} expand="block">
-          Selesai
-        </IonButton>
+        {transaksi.status === 'Diproses' ? (
+          <IonButton onClick={dikirim} expand="block">
+            Barang Dikirim
+          </IonButton>
+        ) : null}
       </IonFooter>
     </>
   )

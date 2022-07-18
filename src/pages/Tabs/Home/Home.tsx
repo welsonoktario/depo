@@ -19,7 +19,7 @@ import { ModalTambahBarang } from '../../../components/Home/ModalTambahBarang'
 import { Barang, Kategori } from '../../../models'
 import './Home.css'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const Home: React.FC = () => {
   const auth = useAtomValue(authAtom)

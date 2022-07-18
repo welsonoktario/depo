@@ -29,7 +29,7 @@ import { Alamat, CartItem } from '../../../models'
 import { useIonRouter } from '../../../utils'
 import './Keranjang.css'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const Keranjang: React.FC = () => {
   const router = useIonRouter()

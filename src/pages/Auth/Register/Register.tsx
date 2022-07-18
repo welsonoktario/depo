@@ -37,7 +37,7 @@ export const Register: React.FC = () => {
 
   const register = async () => {
     const res = await Http.post({
-      url: process.env.REACT_APP_BASE_URL + '/auth/register',
+      url: process.env.REACT_APP_API_URL + '/auth/register',
       data: form,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

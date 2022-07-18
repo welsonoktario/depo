@@ -10,5 +10,6 @@ export interface Transaksi {
   depo?: Depo
   kurir?: Kurir
   lokasiPengiriman: LngLat
+  buktiPembayaran?: string
   details: TransaksiDetail[]
 }

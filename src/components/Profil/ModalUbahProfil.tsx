@@ -22,7 +22,7 @@ import { FC, useRef } from 'react'
 import { authAtom } from '../../atoms'
 import { User } from '../../models'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const ModalUbahProfil: FC = () => {
   const [auth, setAuth] = useAtom(authAtom)

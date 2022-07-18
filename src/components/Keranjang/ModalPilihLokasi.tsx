@@ -14,25 +14,30 @@ import {
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
 import { close } from 'ionicons/icons'
-import { GeolocateControl, LngLat, Map, MapMouseEvent, Marker } from 'mapbox-gl'
+// @ts-ignore
+import * as mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { FC, useEffect, useRef, useState } from 'react'
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'
 import './ModalPilihLokasi.css'
 
 const ACCESS_TOKEN =
   'pk.eyJ1Ijoid2Vsc29ub2t0YXJpbyIsImEiOiJja3liam9zNW0wZnppMnVvZGdwaW1tZDltIn0.VZSKrmUqnhui_Z4XQYrvYg'
+mapboxgl.workerClass = MapboxWorker
 
 export const ModalPilihLokasi: FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<Map | null>(null)
+  const map = useRef<mapboxgl.Map | null>(null)
   const geocoder = useRef<MapboxGeocoder | null>(null)
-  const geolocate = useRef<GeolocateControl | null>()
-  const marker = useRef<Marker | null>(null)
+  const geolocate = useRef<mapboxgl.GeolocateControl | null>()
+  const marker = useRef<mapboxgl.Marker | null>(null)
   const [alamat, setAlamat] = useState('')
 
   useEffect(() => {
     if (map.current) return
-    map.current = new Map({
+    map.current = new mapboxgl.Map({
       accessToken: ACCESS_TOKEN,
       container: mapContainer.current as HTMLElement,
       style: 'mapbox://styles/mapbox/streets-v11',
@@ -48,7 +53,7 @@ export const ModalPilihLokasi: FC = () => {
       placeholder: 'Cari alamat',
     })
 
-    geolocate.current = new GeolocateControl({
+    geolocate.current = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true,
       },
@@ -69,13 +74,15 @@ export const ModalPilihLokasi: FC = () => {
     geocoder.current.on('result', getGeocoderLocation)
   })
 
-  const getClickLocation = async (e: MapMouseEvent) => {
+  const getClickLocation = async (e: mapboxgl.MapMouseEvent) => {
     const lngLat = e.lngLat
 
     if (marker.current) {
       marker.current.setLngLat(lngLat)
     } else {
-      marker.current = new Marker().setLngLat(lngLat).addTo(map.current as Map)
+      marker.current = new mapboxgl.Marker()
+        .setLngLat(lngLat)
+        .addTo(map.current as mapboxgl.Map)
     }
 
     map.current?.flyTo({
@@ -88,18 +95,20 @@ export const ModalPilihLokasi: FC = () => {
   }
 
   const getGeocoderLocation = async (e: any) => {
-    const lngLat = e.result.center as LngLat
+    const lngLat = e.result.center as mapboxgl.LngLat
 
     if (marker.current) {
       marker.current.setLngLat(lngLat)
     } else {
-      marker.current = new Marker().setLngLat(lngLat).addTo(map.current as Map)
+      marker.current = new mapboxgl.Marker()
+        .setLngLat(lngLat)
+        .addTo(map.current as mapboxgl.Map)
     }
 
     await reverseGeocode(lngLat)
   }
 
-  const reverseGeocode = async (lngLat: LngLat) => {
+  const reverseGeocode = async (lngLat: mapboxgl.LngLat) => {
     const latLng = lngLat.toArray().join(',')
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${latLng}.json?access_token=${ACCESS_TOKEN}&types=postcode,district,address,poi`
     const res = await Http.get({

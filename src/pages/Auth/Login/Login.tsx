@@ -35,7 +35,7 @@ export const Login: React.FC = () => {
   const login = async (e: any) => {
     e.preventDefault()
     const res = await Http.post({
-      url: process.env.REACT_APP_BASE_URL + '/auth/login',
+      url: process.env.REACT_APP_API_URL + '/auth/login',
       data: {
         email: form.email,
         password: form.password,

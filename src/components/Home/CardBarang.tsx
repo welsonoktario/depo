@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   IonAvatar,
   IonCard,
@@ -8,10 +6,11 @@ import {
   IonCardTitle,
   IonItem,
 } from '@ionic/react'
-
+import React from 'react'
 import { Barang } from '../../models'
-
 import './CardBarang.css'
+
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 export const CardBarang: React.FC<{
   barang: Barang
@@ -30,8 +29,9 @@ export const CardBarang: React.FC<{
         <IonAvatar slot="start">
           <img
             src={
-              props.barang.gambar ||
-              `https://ui-avatars.com/api/?name=${props.barang.nama}`
+              props.barang.gambar
+                ? `${BASE_URL}/storage/${props.barang.gambar}`
+                : `https://ui-avatars.com/api/?name=${props.barang.nama}`
             }
             alt={props.barang.nama}
           />

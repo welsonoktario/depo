@@ -23,13 +23,18 @@ import {
 } from '@ionic/react'
 import { close } from 'ionicons/icons'
 import { useAtomValue } from 'jotai'
-import { LngLat } from 'mapbox-gl'
+// @ts-ignore
+import * as mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'
 import { FC, useState } from 'react'
 import { authAtom } from '../../atoms'
 import { Alamat } from '../../models'
 import { ModalPilihLokasi } from '../Keranjang/ModalPilihLokasi'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
+mapboxgl.workerClass = MapboxWorker;
 
 export const ModalEditAlamat: FC<{ alamat: Alamat }> = ({ alamat }) => {
   const auth = useAtomValue(authAtom)
@@ -80,7 +85,7 @@ export const ModalEditAlamat: FC<{ alamat: Alamat }> = ({ alamat }) => {
   const closeModal = (
     e: IonModalCustomEvent<
       OverlayEventDetail<{
-        lokasi: LngLat
+        lokasi: mapboxgl.LngLat
         alamat: string
       }>
     >

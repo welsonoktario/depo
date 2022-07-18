@@ -37,7 +37,7 @@ export const Riwayat: React.FC = () => {
     ) => {
       setLoading(true)
       const res = await Http.get({
-        url: process.env.REACT_APP_BASE_URL + '/transaksi',
+        url: process.env.REACT_APP_API_URL + '/transaksi',
         headers: {
           Authorization: `Bearer ${auth.token}`,
           Accept: 'application/json',
@@ -75,16 +75,16 @@ export const Riwayat: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large">Riwayat</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        
         {loading ? (
           <IonSpinner className="spinner"></IonSpinner>
         ) : (
           <>
-            <IonHeader collapse="condense">
-              <IonToolbar>
-                <IonTitle size="large">Riwayat</IonTitle>
-              </IonToolbar>
-            </IonHeader>
-
             <IonRefresher slot="fixed" onIonRefresh={loadTransaksis}>
               <IonRefresherContent></IonRefresherContent>
             </IonRefresher>

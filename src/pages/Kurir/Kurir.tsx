@@ -29,7 +29,7 @@ import { CardRiwayat } from '../../components/Riwayat/CardRiwayat'
 import { Transaksi } from '../../models'
 import { useIonRouter } from '../../utils'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const Kurir: FC = () => {
   const router = useIonRouter()
@@ -127,16 +127,15 @@ export const Kurir: FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large">Home</IonTitle>
+          </IonToolbar>
+        </IonHeader>
         {loading ? (
           <IonSpinner className="spinner"></IonSpinner>
         ) : (
           <>
-            <IonHeader collapse="condense">
-              <IonToolbar>
-                <IonTitle size="large">Home</IonTitle>
-              </IonToolbar>
-            </IonHeader>
-
             <IonRefresher slot="fixed" onIonRefresh={loadTransaksis}>
               <IonRefresherContent></IonRefresherContent>
             </IonRefresher>
@@ -145,7 +144,7 @@ export const Kurir: FC = () => {
             <IonModal
               isOpen={isOpen}
               canDismiss={true}
-              onDidDismiss={() => setIsOpen(false)}
+              onDidDismiss={closeModal}
             >
               {selected ? (
                 <ModalDetailTransaksi

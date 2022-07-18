@@ -22,7 +22,7 @@ import { authAtom, cartAtom } from '../../atoms'
 import { Barang } from '../../models'
 import './ModalTambahBarang.css'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
   const auth = useAtomValue(authAtom)

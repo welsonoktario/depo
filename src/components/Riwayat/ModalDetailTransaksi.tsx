@@ -1,3 +1,4 @@
+import { Http } from '@capacitor-community/http'
 import { Camera, CameraResultType } from '@capacitor/camera'
 import { Dialog } from '@capacitor/dialog'
 import { modalController } from '@ionic/core'
@@ -19,6 +20,7 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from '@ionic/react'
 import {
   calendarOutline,
@@ -28,14 +30,21 @@ import {
   qrCodeOutline,
   timeOutline,
 } from 'ionicons/icons'
+import { useAtomValue } from 'jotai'
 import React, { useState } from 'react'
+import { authAtom } from '../../atoms'
 import { Transaksi } from '../../models'
+
+const BASE_URL = process.env.REACT_APP_BASE_URL
+const API_URL = process.env.REACT_APP_API_URL
 
 export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   props
 ) => {
   const transaksi = props.transaksi
-  const [bukti, setBukti] = useState('')
+  const auth = useAtomValue(authAtom)
+  const [present, dismiss] = useIonToast()
+  const [bukti, setBukti] = useState(transaksi.buktiPembayaran)
 
   const tanggal = new Date(transaksi.tanggal).toLocaleString('id-ID', {
     weekday: 'long',
@@ -97,13 +106,71 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   const takePicture = async () => {
     const image = await Camera.getPhoto({
       quality: 90,
-      allowEditing: true,
+      allowEditing: false,
       resultType: CameraResultType.Uri,
+      saveToGallery: true,
     })
 
-    if (image.webPath) {
+    if (image.webPath && image.path) {
       setBukti(image.webPath)
-      console.log(image.path)
+      await uploadBukti(image.path)
+    }
+  }
+
+  const uploadBukti = async (filePath: string) => {
+    const res = await Http.uploadFile({
+      url: API_URL + '/transaksi/' + transaksi.id + '/upload',
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      filePath,
+      name: 'bukti',
+    })
+
+    const { data, status } = res
+
+    if (status !== 500) {
+      present({
+        message: data.msg,
+        color: 'success',
+        duration: 3000,
+      })
+    } else {
+      present({
+        message: data.msg,
+        color: 'danger',
+        duration: 3000,
+      })
+    }
+  }
+
+  const konfirmasi = async () => {
+    const res = await Http.patch({
+      url: API_URL + '/transaksi/' + transaksi.id,
+      data: {
+        status: 'Selesai',
+      },
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const { status } = res
+
+    if (status !== 500) {
+      await modalController.dismiss({
+        id: transaksi.id,
+        status: 'Selesai',
+      })
+    } else {
+      await Dialog.alert({
+        title: 'Error',
+        message: 'Terjadi kesalahan sistem, silahkan coba lagi nanti',
+      })
     }
   }
 
@@ -120,7 +187,7 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
         </IonToolbar>
       </IonHeader>
 
-      <IonContent>
+      <IonContent className="ion-padding-bottom">
         <IonList className="ion-margin-bottom" inset>
           <IonItemGroup>
             <IonListHeader>
@@ -183,17 +250,31 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
           </IonItemGroup>
         </IonList>
         {bukti ? (
-          <IonImg>
-            <img src={bukti} alt="Bukti pembayaran" />
-          </IonImg>
+          <>
+            <IonText>
+              <h6 className="ion-margin-horizontal" style={{ marginTop: 0 }}>
+                Bukti Pembayaran:
+              </h6>
+            </IonText>
+            <IonImg
+              className="ion-margin-horizontal"
+              src={`${BASE_URL}/storage/${bukti}`}
+            />
+          </>
         ) : null}
-        <IonButton onClick={takePicture} expand="block">
-          Tambah Bukti Pembayaran
-        </IonButton>
+        {!bukti ? (
+          <IonButton
+            onClick={takePicture}
+            expand="block"
+            className="ion-margin-horizontal ion-margin-bottom"
+          >
+            Tambah Bukti Pembayaran
+          </IonButton>
+        ) : null}
       </IonContent>
 
       <IonFooter className="ion-padding">
-        <IonItem lines="none" className="ion-margin-bottom">
+        <IonItem lines="none">
           <IonLabel>Total</IonLabel>
           <IonNote slot="end" color="primary">
             Rp {total.toLocaleString('id-ID')}
@@ -201,8 +282,23 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
         </IonItem>
 
         {transaksi.status === 'Menunggu Pembayaran' ? (
-          <IonButton onClick={showPembayaran} expand="block" fill="clear">
+          <IonButton
+            onClick={showPembayaran}
+            expand="block"
+            fill="clear"
+            className="ion-margin-bottom"
+          >
             Petunjuk Pembayaran
+          </IonButton>
+        ) : null}
+
+        {transaksi.status === 'Dikirim' ? (
+          <IonButton
+            onClick={konfirmasi}
+            expand="block"
+            className="ion-margin-bottom"
+          >
+            Konfirmasi Pesanan
           </IonButton>
         ) : null}
       </IonFooter>

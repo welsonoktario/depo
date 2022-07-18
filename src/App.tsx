@@ -39,7 +39,7 @@ import './theme/variables.css'
 
 setupIonicReact()
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false)
@@ -63,23 +63,25 @@ const App: React.FC = () => {
           token: tokenString.value,
         })
 
-        const res = await Http.get({
-          url: BASE_URL + '/alamat',
-          headers: {
-            Authorization: `Bearer ${tokenString.value}`,
-            Accept: 'application/json',
-          },
-        })
-
-        const { data, status } = res
-
-        if (status !== 500) {
-          setAlamats(data.data)
-        } else {
-          await Dialog.alert({
-            title: 'Error',
-            message: 'Terjadi kesalahan sistem, silahkan coba lagi nanti',
+        if (auth.user?.role === 'Customer') {
+          const res = await Http.get({
+            url: BASE_URL + '/alamat',
+            headers: {
+              Authorization: `Bearer ${tokenString.value}`,
+              Accept: 'application/json',
+            },
           })
+
+          const { data, status } = res
+
+          if (status !== 500) {
+            setAlamats(data.data)
+          } else {
+            await Dialog.alert({
+              title: 'Error',
+              message: 'Terjadi kesalahan sistem, silahkan coba lagi nanti',
+            })
+          }
         }
       }
 

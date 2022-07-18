@@ -20,7 +20,7 @@ import { useAtom } from 'jotai'
 import { FC, useState } from 'react'
 import { authAtom } from '../../atoms'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const ModalUbahPassword: FC = () => {
   const [auth, setAuth] = useAtom(authAtom)

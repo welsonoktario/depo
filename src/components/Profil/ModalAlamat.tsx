@@ -25,7 +25,7 @@ import { ModalEditAlamat } from '../Alamat/ModalEditAlamat'
 import { ModalTambahAlamat } from '../Alamat/ModalTambahAlamat'
 import { CardAlamat } from './Alamat/CardAlamat'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const ModalAlamat: FC = () => {
   const auth = useAtomValue(authAtom)

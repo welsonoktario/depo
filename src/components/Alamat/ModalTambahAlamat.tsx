@@ -28,7 +28,7 @@ import { FC, useState } from 'react'
 import { authAtom } from '../../atoms'
 import { ModalPilihLokasi } from '../Keranjang/ModalPilihLokasi'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.REACT_APP_API_URL
 
 export const ModalTambahAlamat: FC = () => {
   const auth = useAtomValue(authAtom)
