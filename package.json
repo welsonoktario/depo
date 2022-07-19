@@ -40,6 +40,7 @@
     "@capacitor/status-bar": "1.0.8",
     "@capacitor/storage": "^1.2.5",
     "@ionic/core": "^6.1.12",
+    "@ionic/pwa-elements": "^3.1.1",
     "@ionic/react": "^6.1.12",
     "@ionic/react-router": "^6.1.12",
     "@mapbox/mapbox-gl-geocoder": "^5.0.1",

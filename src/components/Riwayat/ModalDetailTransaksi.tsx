@@ -147,10 +147,25 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   }
 
   const konfirmasi = async () => {
+    const { value, cancelled } = await Dialog.prompt({
+      title: 'Ulasan',
+      message: 'Berikan ulasan terkait proses transaksi',
+      cancelButtonTitle: 'Batal',
+      okButtonTitle: 'Kirim',
+      inputPlaceholder: 'Ulasan',
+    })
+
     const res = await Http.patch({
       url: API_URL + '/transaksi/' + transaksi.id,
       data: {
         status: 'Selesai',
+        ...(!cancelled
+          ? value
+            ? {
+                ulasan: value,
+              }
+            : null
+          : null),
       },
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -259,6 +274,7 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
             <IonImg
               className="ion-margin-horizontal"
               src={`${BASE_URL}/storage/${bukti}`}
+              style={{ borderRadius: '24px' }}
             />
           </>
         ) : null}
