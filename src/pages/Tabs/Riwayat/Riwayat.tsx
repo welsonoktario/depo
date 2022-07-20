@@ -1,5 +1,9 @@
 import { Http } from '@capacitor-community/http'
-import { IonRefresherCustomEvent } from '@ionic/core'
+import {
+  IonModalCustomEvent,
+  IonRefresherCustomEvent,
+  OverlayEventDetail,
+} from '@ionic/core'
 import {
   IonContent,
   IonHeader,
@@ -67,6 +71,19 @@ export const Riwayat: React.FC = () => {
     ></CardRiwayat>
   ))
 
+  const closeModal = async (
+    e: IonModalCustomEvent<
+      OverlayEventDetail<{ id: number; status: string } | undefined>
+    >
+  ) => {
+    setIsOpen(false)
+    const data = e.detail.data
+
+    if (data) {
+      setTimeout(() => loadTransaksis(undefined), 500)
+    }
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -80,7 +97,7 @@ export const Riwayat: React.FC = () => {
             <IonTitle size="large">Riwayat</IonTitle>
           </IonToolbar>
         </IonHeader>
-        
+
         {loading ? (
           <IonSpinner className="spinner"></IonSpinner>
         ) : (
@@ -93,7 +110,7 @@ export const Riwayat: React.FC = () => {
             <IonModal
               isOpen={isOpen}
               canDismiss={true}
-              onDidDismiss={() => setIsOpen(false)}
+              onDidDismiss={closeModal}
             >
               {selected ? (
                 <ModalDetailTransaksi

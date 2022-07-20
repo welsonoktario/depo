@@ -25,6 +25,7 @@ import {
 import {
   calendarOutline,
   carOutline,
+  chatboxEllipsesOutline,
   close as closeIcon,
   homeOutline,
   qrCodeOutline,
@@ -242,7 +243,7 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
               <IonLabel>Kurir</IonLabel>
               <IonLabel slot="end">{transaksi.kurir?.user.nama}</IonLabel>
             </IonItem>
-            <IonItem lines="none">
+            <IonItem lines="inset">
               <IonIcon
                 icon={timeOutline}
                 style={{ paddingRight: '8px' }}
@@ -252,6 +253,18 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
                 {transaksi.status}
               </IonLabel>
             </IonItem>
+            {transaksi.ulasan ? (
+              <IonItem lines="none">
+                <IonIcon
+                  icon={chatboxEllipsesOutline}
+                  style={{ paddingRight: '8px' }}
+                ></IonIcon>
+                <IonLabel>Ulasan</IonLabel>
+                <IonText slot="end">
+                  <p>{transaksi.ulasan || '-'}</p>
+                </IonText>
+              </IonItem>
+            ) : null}
           </IonItemGroup>
 
           <IonItemGroup>
