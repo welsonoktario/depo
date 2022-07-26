@@ -77,11 +77,7 @@ export const Riwayat: React.FC = () => {
     >
   ) => {
     setIsOpen(false)
-    const data = e.detail.data
-
-    if (data) {
-      setTimeout(() => loadTransaksis(undefined), 500)
-    }
+    setTimeout(() => loadTransaksis(undefined), 500)
   }
 
   return (
@@ -106,7 +102,11 @@ export const Riwayat: React.FC = () => {
               <IonRefresherContent></IonRefresherContent>
             </IonRefresher>
 
-            {transaksis.length ? transaksiCards : <p>Kosong</p>}
+            {transaksis.length ? (
+              transaksiCards
+            ) : (
+              <p className="ion-margin-horizontal">Kosong</p>
+            )}
             <IonModal
               isOpen={isOpen}
               canDismiss={true}
