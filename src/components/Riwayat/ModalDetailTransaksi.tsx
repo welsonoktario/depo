@@ -57,10 +57,12 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   const statusColor = () => {
     let color = 'tertiary'
     const status = props.transaksi.status
-    if (status === 'Menunggu Pembayaran') {
+    if (status === 'Menunggu Pembayaran' || status === 'Menunggu Konfirmasi') {
       color = 'warning'
     } else if (status === 'Selesai') {
       color = 'success'
+    } else if (status === 'Batal') {
+      color = 'danger'
     }
 
     return color
