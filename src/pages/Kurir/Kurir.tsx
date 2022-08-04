@@ -1,5 +1,5 @@
 import { Http } from '@capacitor-community/http'
-import { Storage } from '@capacitor/storage'
+import { Preferences } from '@capacitor/preferences'
 import {
   IonModalCustomEvent,
   IonRefresherCustomEvent,
@@ -105,7 +105,7 @@ export const Kurir: FC = () => {
   }
 
   const logout = async () => {
-    Storage.clear()
+    Preferences.clear()
     setAuth({
       user: null,
       token: '',

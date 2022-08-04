@@ -1,4 +1,4 @@
-import { Storage } from '@capacitor/storage'
+import { Preferences } from '@capacitor/preferences'
 import {
   IonContent,
   IonHeader,
@@ -34,7 +34,7 @@ export const Profil: React.FC = () => {
   const [isModalAlamatOpen, setIsModalAlamatOpen] = useState(false)
 
   const logout = async () => {
-    await Storage.clear()
+    await Preferences.clear()
     setAuth({
       user: null,
       token: '',

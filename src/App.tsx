@@ -1,4 +1,4 @@
-import { Storage } from '@capacitor/storage'
+import { Preferences } from '@capacitor/preferences'
 import {
   IonApp,
   IonRouterOutlet,
@@ -49,8 +49,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const getAuth = async () => {
       setLoading(true)
-      const userJson = await Storage.get({ key: 'user' })
-      const tokenString = await Storage.get({ key: 'token' })
+      const userJson = await Preferences.get({ key: 'user' })
+      const tokenString = await Preferences.get({ key: 'token' })
 
       if (
         userJson.value &&

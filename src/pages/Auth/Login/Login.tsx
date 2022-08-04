@@ -1,6 +1,6 @@
 import { Http } from '@capacitor-community/http'
 import { Dialog } from '@capacitor/dialog'
-import { Storage } from '@capacitor/storage'
+import { Preferences } from '@capacitor/preferences'
 import {
   IonButton,
   IonContent,
@@ -48,7 +48,7 @@ export const Login: React.FC = () => {
     const { status, msg, data } = await res.data
 
     if (status === 'OK') {
-      await Storage.clear()
+      await Preferences.clear()
 
       if (data.user.customer) {
         const cart = data.user.customer.barangs
@@ -56,8 +56,8 @@ export const Login: React.FC = () => {
         delete data.user.customer.barangs
       }
 
-      await Storage.set({ key: 'user', value: JSON.stringify(data) })
-      await Storage.set({ key: 'token', value: data.token })
+      await Preferences.set({ key: 'user', value: JSON.stringify(data) })
+      await Preferences.set({ key: 'token', value: data.token })
       setAuth({
         user: data.user,
         token: data.token,

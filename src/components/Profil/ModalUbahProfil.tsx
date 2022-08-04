@@ -1,6 +1,6 @@
 import { Http } from '@capacitor-community/http'
 import { Dialog } from '@capacitor/dialog'
-import { Storage } from '@capacitor/storage'
+import { Preferences } from '@capacitor/preferences'
 import { modalController } from '@ionic/core'
 import {
   IonButton,
@@ -58,8 +58,8 @@ export const ModalUbahProfil: FC = () => {
 
       setAuth(oldAuth)
 
-      Storage.remove({ key: 'user' })
-      Storage.set({ key: 'user', value: JSON.stringify(oldAuth.user) })
+      Preferences.remove({ key: 'user' })
+      Preferences.set({ key: 'user', value: JSON.stringify(oldAuth.user) })
       await modalController.dismiss()
     } else {
       await Dialog.alert({
