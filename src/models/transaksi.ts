@@ -13,4 +13,5 @@ export interface Transaksi {
   buktiPembayaran?: string
   ulasan?: string
   details: TransaksiDetail[]
+  alasanPembatalan: string
 }

@@ -252,7 +252,9 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
               ></IonIcon>
               <IonLabel>Status</IonLabel>
               <IonLabel slot="end" color={statusColor()}>
-                {transaksi.status}
+                {transaksi.status === 'Batal'
+                  ? `${transaksi.status} (${transaksi.alasanPembatalan})`
+                  : transaksi.status}
               </IonLabel>
             </IonItem>
             {transaksi.ulasan ? (
