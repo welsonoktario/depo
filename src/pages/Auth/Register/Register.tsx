@@ -1,4 +1,4 @@
-import { Http } from '@capacitor-community/http'
+import { CapacitorHttp as Http } from '@capacitor/core'
 import { Dialog } from '@capacitor/dialog'
 import { Preferences } from '@capacitor/preferences'
 import {

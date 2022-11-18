@@ -1,4 +1,4 @@
-import { Http } from '@capacitor-community/http'
+import { CapacitorHttp as Http } from '@capacitor/core'
 import { modalController } from '@ionic/core'
 import {
   IonButton,

@@ -1,4 +1,4 @@
-import { Http } from '@capacitor-community/http'
+import { CapacitorHttp as Http } from '@capacitor/core'
 import { Dialog } from '@capacitor/dialog'
 import { IonModalCustomEvent, OverlayEventDetail } from '@ionic/core'
 import {
@@ -114,7 +114,7 @@ export const Keranjang: React.FC = () => {
   }
 
   const deleteItem = (barang: number) => {
-    Http.del({
+    Http.delete({
       url: BASE_URL + '/keranjang/' + barang,
       headers: {
         Authorization: `Bearer ${auth.token}`,

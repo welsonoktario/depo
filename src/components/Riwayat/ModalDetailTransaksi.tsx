@@ -1,5 +1,5 @@
-import { Http } from '@capacitor-community/http'
 import { Camera, CameraResultType } from '@capacitor/camera'
+import { CapacitorHttp as Http } from '@capacitor/core'
 import { Dialog } from '@capacitor/dialog'
 import { modalController } from '@ionic/core'
 import {
@@ -35,6 +35,8 @@ import { useAtomValue } from 'jotai'
 import React, { useState } from 'react'
 import { authAtom } from '../../atoms'
 import { Transaksi } from '../../models'
+// @ts-ignore
+import { HTTP } from '@awesome-cordova-plugins/http'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 const API_URL = process.env.REACT_APP_API_URL
@@ -121,16 +123,17 @@ export const ModalDetailTransaksi: React.FC<{ transaksi: Transaksi }> = (
   }
 
   const uploadBukti = async (filePath: string) => {
-    const res = await Http.uploadFile({
-      url: API_URL + '/transaksi/' + transaksi.id + '/upload',
-      headers: {
+    const res = await HTTP.uploadFile(
+      API_URL + '/transaksi/' + transaksi.id + '/upload',
+      null,
+      {
         Authorization: `Bearer ${auth.token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       filePath,
-      name: 'bukti',
-    })
+      'bukti'
+    )
 
     const { data, status } = res
 

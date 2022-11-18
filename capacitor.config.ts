@@ -4,7 +4,12 @@ const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
   appName: 'depo',
   webDir: 'build',
-  bundledWebRuntime: false
+  bundledWebRuntime: false,
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
 };
 
 export default config;

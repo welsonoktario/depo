@@ -28,7 +28,7 @@ import '@ionic/react/css/text-alignment.css'
 import '@ionic/react/css/text-transformation.css'
 
 /* Theme variables */
-import { Http } from '@capacitor-community/http'
+import { CapacitorHttp as Http } from '@capacitor/core'
 import { Dialog } from '@capacitor/dialog'
 import './App.css'
 import { Login } from './pages/Auth/Login/Login'
