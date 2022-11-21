@@ -58,7 +58,7 @@ export const ModalTambahBarang: React.FC<{ barang: Barang }> = (props) => {
       }
     } else {
       const res = await Http.post({
-        url: BASE_URL + '/keranjang/',
+        url: BASE_URL + '/keranjang',
         data: {
           barang: barang.id,
           jumlah,
